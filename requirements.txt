@@ -3,7 +3,8 @@ gunicorn
 python-decouple
 psycopg[binary]
 dj-database-url
-requests
+requests>=2.32.3,<3
+chardet<6
 whitenoise
 django-tailwind
 django-allauth[socialaccount]

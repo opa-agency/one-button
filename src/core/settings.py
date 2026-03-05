@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     # 'allauth.socialaccount.providers.google',
     "tailwind",
     "theme",
-    "core",
+    "application",
 ]
 
 TAILWIND_APP_NAME = "theme"

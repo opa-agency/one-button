@@ -17,12 +17,13 @@ Including another URLconf
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
-from core import views
+from application.views import home_page_view, checkout_finalize_view, dashboard_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", views.home_page_view, name="home"),
-    path("dashboard/", views.dashboard_view, name="dashboard"),
+    path("", home_page_view, name="home"),
+    path("dashboard/", dashboard_view, name="dashboard"),
+    path("checkout/finalize/", checkout_finalize_view, name="checkout_finalize"),
 ]
 
 if settings.DEBUG:

@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block head_title %}Home{% endblock head_title %}
+
+{% block content %}
+  <main class="min-h-screen flex items-center justify-center px-6 py-10">
+    <section class="w-full max-w-105 text-center">
+      <h1 class="text-[46px] leading-none font-black uppercase tracking-tight text-slate-800">PLĂTEȘTE 10 LEI</h1>
+      <p class="mt-5 text-[22px] leading-tight text-slate-700">ca să vezi câți oameni au plătit 10 lei.</p>
+
+      <form class="mt-10" method="post" action="{% url 'home' %}">
+        {% csrf_token %}
+        <input type="hidden" name="token" value="{{ identification_token }}" />
+        <button
+          type="submit"
+          class="h-16 w-full rounded-lg bg-yellow-400 text-[38px] font-black uppercase leading-none tracking-tight text-slate-800 shadow-[0_4px_8px_rgba(0,0,0,0.12)] hover:bg-yellow-300"
+        >
+          PLĂTEȘTE 10 LEI
+        </button>
+
+        <div class="mt-9 space-y-4 text-left text-[14px] leading-snug text-slate-500">
+          <label class="flex items-start gap-2">
+            <input id="termsAccepted" type="checkbox" checked required class="mt-0.5 h-4 w-4 rounded border-slate-300 bg-transparent" />
+            <span>
+              Am citit și sunt de acord cu
+              <a
+                href="/termeni-si-conditii/"
+                onclick="return openPopup(event, 'terms')"
+                class="font-semibold text-slate-600 underline"
+              >
+                Termenii si Conditiile.
+              </a>
+            </span>
+          </label>
+
+          <label class="flex items-start gap-2">
+            <input id="deliveryAccepted" type="checkbox" checked required class="mt-0.5 h-4 w-4 rounded border-slate-300 bg-transparent" />
+            <span>
+              Solicit livrarea imediată a informațiilor digitale si Sunt de acord că îmi pierd dreptul de retragere și
+              rambursare.
+            </span>
+          </label>
+        </div>
+      </form>
+
+      <nav class="mt-11 flex items-center justify-center gap-5 text-[13px] text-slate-500 underline">
+        <a href="/termeni-si-conditii/" onclick="return openPopup(event, 'terms')">Termeni si Condiții</a>
+        <a href="/politica-de-confidentialitate/" onclick="return openPopup(event, 'privacy')">Politica de Confidențialitate</a>
+        <a href="/politica-cookies/" onclick="return openPopup(event, 'cookies')">Politica Cookies</a>
+      </nav>
+
+      <p class="mt-5 text-[13px] text-slate-500">© 2024 plateste10lei.ro</p>
+    </section>
+  </main>
+
+  <div id="policyModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/45 p-4" onclick="closePopup(event)">
+    <div class="relative h-[85vh] w-full max-w-4xl overflow-hidden rounded-lg bg-white shadow-xl">
+      <button
+        type="button"
+        onclick="closePopup()"
+        class="absolute right-3 top-3 z-10 rounded-md bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-700 hover:bg-slate-200"
+      >
+        Închide
+      </button>
+      <div id="policyContent" class="h-full overflow-y-auto px-6 py-12"></div>
+    </div>
+  </div>
+
+  <template id="policy-terms">
+    {% include 'snippets/policies/terms.html' %}
+  </template>
+
+  <template id="policy-privacy">
+    {% include 'snippets/policies/privacy.html' %}
+  </template>
+
+  <template id="policy-cookies">
+    {% include 'snippets/policies/cookies.html' %}
+  </template>
+
+  <script>
+    const policyModal = document.getElementById("policyModal");
+    const policyContent = document.getElementById("policyContent");
+    const policyTemplates = {
+      terms: document.getElementById("policy-terms"),
+      privacy: document.getElementById("policy-privacy"),
+      cookies: document.getElementById("policy-cookies"),
+    };
+    const termsAcceptedCheckbox = document.getElementById("termsAccepted");
+    const deliveryAcceptedCheckbox = document.getElementById("deliveryAccepted");
+    const termsAcceptedStorageKey = "oneButton.termsAccepted";
+    const deliveryAcceptedStorageKey = "oneButton.deliveryAccepted";
+
+    function openPopup(event, policyKey) {
+      event.preventDefault();
+      const template = policyTemplates[policyKey];
+      if (!template) {
+        return false;
+      }
+      policyContent.innerHTML = template.innerHTML;
+      policyModal.classList.remove("hidden");
+      policyModal.classList.add("flex");
+      document.body.classList.add("overflow-hidden");
+      return false;
+    }
+
+    function closePopup(event) {
+      if (event && event.target !== policyModal) {
+        return;
+      }
+      policyModal.classList.add("hidden");
+      policyModal.classList.remove("flex");
+      policyContent.innerHTML = "";
+      document.body.classList.remove("overflow-hidden");
+    }
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && !policyModal.classList.contains("hidden")) {
+        closePopup();
+      }
+    });
+
+    function loadCheckboxState(checkbox, storageKey) {
+      const storedValue = localStorage.getItem(storageKey);
+      if (storedValue === null) {
+        return;
+      }
+      checkbox.checked = storedValue === "true";
+    }
+
+    function saveCheckboxState(event) {
+      localStorage.setItem(termsAcceptedStorageKey, String(termsAcceptedCheckbox.checked));
+      localStorage.setItem(deliveryAcceptedStorageKey, String(deliveryAcceptedCheckbox.checked));
+    }
+
+    loadCheckboxState(termsAcceptedCheckbox, termsAcceptedStorageKey);
+    loadCheckboxState(deliveryAcceptedCheckbox, deliveryAcceptedStorageKey);
+    termsAcceptedCheckbox.addEventListener("change", saveCheckboxState);
+    deliveryAcceptedCheckbox.addEventListener("change", saveCheckboxState);
+  </script>
+{% endblock content %}

@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en" class="h-full"> <!-- data-theme on the html is set only for account page theme -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% include 'base/css.html' %}
+    <title>{% block head_title %}Base {% endblock head_title %}</title>
+    {% block extra_head %}{% endblock extra_head %}
+  </head>
+  <body class="min-h-screen text-gray-900 bg-slate-200">
+    {% include 'snippets/messages.html' %}
+      {% block content %}
+        Base template
+      {% endblock content %}
+    {% include 'base/js.html' %}
+  </body>
+</html>

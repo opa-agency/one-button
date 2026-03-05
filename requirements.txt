@@ -1,0 +1,10 @@
+Django==5.2.10
+gunicorn
+python-decouple
+psycopg[binary]
+dj-database-url
+requests
+whitenoise
+django-tailwind
+django-allauth[socialaccount]
+stripe

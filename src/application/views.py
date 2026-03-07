@@ -11,11 +11,28 @@ from decouple import config
 import stripe
 
 from .models import UserPreCheckout, PaymentCompleted
+from .forms import DashboardIdentityForm
 
 STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY")
 STRIPE_PRICE_ID = config("STRIPE_PRICE_ID")
 BASE_URL = config("BASE_URL")
 stripe.api_key = STRIPE_SECRET_KEY
+
+
+def _dashboard_context(token_expires_at=None, profile_form=None, token=None, show_profile_form=False):
+	completed_payments_count = PaymentCompleted.objects.count()
+	recent_payments = (
+		PaymentCompleted.objects.select_related("user_pre_checkout")
+		.order_by("-created_at")[:8]
+	)
+	return {
+		"completed_payments_count": completed_payments_count,
+		"token_expires_at": token_expires_at,
+		"recent_payments": recent_payments,
+		"profile_form": profile_form or DashboardIdentityForm(),
+		"token": token,
+		"show_profile_form": show_profile_form,
+	}
 
 
 def home_page_view(request):
@@ -66,11 +83,11 @@ def checkout_finalize_view(request):
 
 
 def dashboard_view(request):
-	token = request.GET.get("token")
+	token = request.GET.get("token") or request.POST.get("token")
 	if not token:
 		return render(request, "missing_token.html")
 
-	payment_completed = PaymentCompleted.objects.filter(
+	payment_completed = PaymentCompleted.objects.select_related("user_pre_checkout").filter(
 		user_pre_checkout__token=token
 	).first()
 	if not payment_completed:
@@ -80,12 +97,37 @@ def dashboard_view(request):
 	if timezone.now() > valid_until:
 		return render(request, "expired_token.html")
 
-	completed_payments_count = PaymentCompleted.objects.count()
+	user_pre_checkout = payment_completed.user_pre_checkout
+
+	if request.method == "POST":
+		profile_form = DashboardIdentityForm(request.POST)
+		if profile_form.is_valid():
+			user_pre_checkout.username = profile_form.cleaned_data["username"] or None
+			user_pre_checkout.message = profile_form.cleaned_data["message"] or None
+			user_pre_checkout.save(update_fields=["username", "message"])
+			return redirect(f"{reverse('dashboard')}?{urlencode({'token': token})}")
+	else:
+		profile_form = DashboardIdentityForm(
+			initial={
+				"username": user_pre_checkout.username or "",
+				"message": user_pre_checkout.message or "",
+			}
+		)
+
 	return render(
 		request,
 		"dashboard.html",
-		{
-			"completed_payments_count": completed_payments_count,
-			"token_expires_at": valid_until.isoformat(),
-		},
+		_dashboard_context(
+			token_expires_at=valid_until.isoformat(),
+			profile_form=profile_form,
+			token=token,
+			show_profile_form=True,
+		),
 	)
+
+
+def dashboard_admin_view(request):
+	if request.method != "GET":
+		return HttpResponseNotAllowed(["GET"])
+
+	return render(request, "dashboard.html", _dashboard_context())

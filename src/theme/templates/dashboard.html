@@ -2,16 +2,185 @@
 
 {% block head_title %}Home{% endblock head_title %}
 
-{% block content %}
-  Dashboard
+{% block extra_head %}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&display=swap" rel="stylesheet" />
+  <style>
+    .dashboard-shell {
+      --bg: #e7edf5;
+      --ink-900: #1d2a44;
+      --ink-700: #3c4c67;
+      --ink-500: #64748b;
+      --card: #ffffff;
+      --border: #d8e1ee;
+      --accent: #ffd23f;
+      font-family: "Manrope", sans-serif;
+      background: var(--bg);
+    }
 
-  <p>Completed Payments: {{ completed_payments_count }}</p>
-  <p>Token expires in: <span id="token-countdown">--:--</span></p>
+    .dashboard-title {
+      letter-spacing: 0.01em;
+      text-wrap: balance;
+      color: var(--ink-900);
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+    }
+
+    .payer-row {
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .payer-row:last-child {
+      border-bottom: none;
+    }
+
+    .muted {
+      color: var(--ink-500);
+    }
+
+    @media (max-width: 640px) {
+      .dashboard-title {
+        letter-spacing: 0;
+      }
+    }
+  </style>
+{% endblock extra_head %}
+
+{% block content %}
+  <main class="dashboard-shell min-h-screen px-4 py-8 sm:px-6 sm:py-10">
+    <section class="mx-auto w-full max-w-3xl">
+      <header class="text-center">
+        <h1 class="dashboard-title text-3xl font-extrabold uppercase sm:text-5xl">AI PLATIT 10 LEI!</h1>
+        <p class="mt-2 text-xl font-semibold text-[var(--ink-700)] sm:text-3xl">
+          Au platit <span class="font-extrabold text-[var(--ink-900)]">{{ completed_payments_count }}</span> oameni
+        </p>
+      </header>
+
+      <article class="card mt-6 p-4 sm:p-5">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p class="text-2xl font-extrabold text-[var(--ink-900)] sm:text-3xl">Esti #{{ completed_payments_count|add:1 }}</p>
+            {% widthratio completed_payments_count 1 10 as total_paid_lei %}
+            <p class="mt-1 text-base text-[var(--ink-700)] sm:text-lg">
+              Suma totala platita: <strong class="text-[var(--ink-900)]">{{ total_paid_lei }} LEI</strong>
+            </p>
+          </div>
+          <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-center">
+            <p class="text-xs font-bold uppercase tracking-wide text-[var(--ink-700)]">Token expira in</p>
+            <p id="token-countdown" class="mt-1 text-2xl font-extrabold text-[var(--ink-900)]">--:--</p>
+          </div>
+        </div>
+      </article>
+
+      {% if show_profile_form %}
+        <section class="card mt-4 p-4 sm:p-5">
+          <h2 class="text-lg font-extrabold text-[var(--ink-900)] sm:text-xl">Seteaza numele si mesajul</h2>
+          <form method="post" action="{% url 'dashboard' %}" class="mt-3 space-y-3">
+            {% csrf_token %}
+            <input type="hidden" name="token" value="{{ token }}" />
+
+            <div>
+              <label for="{{ profile_form.username.id_for_label }}" class="mb-1 block text-sm font-semibold text-[var(--ink-700)]">Nume afisat</label>
+              {{ profile_form.username }}
+              {% for error in profile_form.username.errors %}
+                <p class="mt-1 text-xs font-semibold text-red-600">{{ error }}</p>
+              {% endfor %}
+            </div>
+
+            <div>
+              <label for="{{ profile_form.message.id_for_label }}" class="mb-1 block text-sm font-semibold text-[var(--ink-700)]">Mesaj</label>
+              {{ profile_form.message }}
+              {% for error in profile_form.message.errors %}
+                <p class="mt-1 text-xs font-semibold text-red-600">{{ error }}</p>
+              {% endfor %}
+            </div>
+
+            <button
+              type="submit"
+              class="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-extrabold uppercase tracking-wide text-white transition hover:bg-slate-800"
+            >
+              Salveaza
+            </button>
+          </form>
+        </section>
+      {% endif %}
+
+      <section class="card mt-4 p-2 sm:p-3">
+        {% for payment in recent_payments %}
+          <article class="payer-row flex items-center justify-between gap-3 px-3 py-3 sm:px-4">
+            <div class="min-w-0">
+              <p class="truncate text-xl font-extrabold leading-tight text-[var(--ink-900)]">
+                {{ payment.user_pre_checkout.username|default:"Anonim" }}
+              </p>
+              {% if payment.user_pre_checkout.message %}
+                <p class="muted truncate text-sm">{{ payment.user_pre_checkout.message }}</p>
+              {% else %}
+                <p class="muted text-sm">fara mesaj</p>
+              {% endif %}
+              <p class="muted text-xs">{{ payment.created_at|timesince }} in urma</p>
+            </div>
+            <p class="shrink-0 text-base font-extrabold text-[var(--ink-900)] sm:text-xl">10 LEI</p>
+          </article>
+        {% empty %}
+          <p class="px-3 py-4 text-sm text-[var(--ink-700)]">Inca nu exista plati afisabile.</p>
+        {% endfor %}
+      </section>
+
+      <article class="card mt-4 p-4 text-sm text-[var(--ink-700)] sm:text-base">
+        Lista de platitori este <strong>anonima</strong>. Nu colectam si nu afisam informatii personale.
+      </article>
+
+      <nav class="mt-6 flex flex-wrap items-center justify-center gap-4 text-xs text-slate-500 underline sm:text-sm">
+        <a href="/termeni-si-conditii/" onclick="return openPopup(event, 'terms')">Termeni si Conditii</a>
+        <a href="/politica-de-confidentialitate/" onclick="return openPopup(event, 'privacy')">Politica de Confidentialitate</a>
+        <a href="/politica-cookies/" onclick="return openPopup(event, 'cookies')">Politica Cookies</a>
+      </nav>
+
+      <p class="mt-3 pb-4 text-center text-xs text-slate-500">© 2024 plateste10lei.ro</p>
+    </section>
+  </main>
+
+  <div id="policyModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/45 p-4" onclick="closePopup(event)">
+    <div class="relative h-[85vh] w-full max-w-4xl overflow-hidden rounded-lg bg-white shadow-xl">
+      <button
+        type="button"
+        onclick="closePopup()"
+        class="absolute right-3 top-3 z-10 rounded-md bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-700 hover:bg-slate-200"
+      >
+        Inchide
+      </button>
+      <div id="policyContent" class="h-full overflow-y-auto px-6 py-12"></div>
+    </div>
+  </div>
+
+  <template id="policy-terms">
+    {% include 'snippets/policies/terms.html' %}
+  </template>
+
+  <template id="policy-privacy">
+    {% include 'snippets/policies/privacy.html' %}
+  </template>
+
+  <template id="policy-cookies">
+    {% include 'snippets/policies/cookies.html' %}
+  </template>
 
   <script>
     (function () {
       const countdownElement = document.getElementById("token-countdown");
       const expiresAt = new Date("{{ token_expires_at|escapejs }}").getTime();
+      const policyModal = document.getElementById("policyModal");
+      const policyContent = document.getElementById("policyContent");
+      const policyTemplates = {
+        terms: document.getElementById("policy-terms"),
+        privacy: document.getElementById("policy-privacy"),
+        cookies: document.getElementById("policy-cookies"),
+      };
 
       function formatRemaining(ms) {
         const totalSeconds = Math.max(0, Math.floor(ms / 1000));
@@ -21,6 +190,12 @@
       }
 
       function updateCountdown() {
+        if (Number.isNaN(expiresAt)) {
+          countdownElement.textContent = "--:--";
+          clearInterval(timerId);
+          return;
+        }
+
         const remaining = expiresAt - Date.now();
         if (remaining <= 0) {
           countdownElement.textContent = "Expired";
@@ -32,6 +207,35 @@
 
       updateCountdown();
       const timerId = setInterval(updateCountdown, 1000);
+
+      window.openPopup = function openPopup(event, policyKey) {
+        event.preventDefault();
+        const template = policyTemplates[policyKey];
+        if (!template) {
+          return false;
+        }
+        policyContent.innerHTML = template.innerHTML;
+        policyModal.classList.remove("hidden");
+        policyModal.classList.add("flex");
+        document.body.classList.add("overflow-hidden");
+        return false;
+      };
+
+      window.closePopup = function closePopup(event) {
+        if (event && event.target !== policyModal) {
+          return;
+        }
+        policyModal.classList.add("hidden");
+        policyModal.classList.remove("flex");
+        policyContent.innerHTML = "";
+        document.body.classList.remove("overflow-hidden");
+      };
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && !policyModal.classList.contains("hidden")) {
+          window.closePopup();
+        }
+      });
     })();
   </script>
 {% endblock content %}

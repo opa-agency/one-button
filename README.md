@@ -1,5 +1,6 @@
 # one-button
 
+primi 10 de platitori 
 
 
 # Setup Commands

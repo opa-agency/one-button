@@ -1,8 +1,23 @@
 {% extends "base.html" %}
 
-{% block head_title %}Expired Token{% endblock head_title %}
+{% block head_title %}Token expirat{% endblock head_title %}
+
+{% block body_class %}status-shell{% endblock body_class %}
+
+{% block extra_head %}
+  {% include 'snippets/status_styles.html' %}
+{% endblock extra_head %}
 
 {% block content %}
-  <h1>Token expired</h1>
-  <p>This token is older than 10 minutes and can no longer be used.</p>
+  <div class="top-line"></div>
+  <div class="container">
+    <p class="eyebrow">sesiunea a expirat</p>
+    <div class="code">10:00</div>
+    <h1 class="headline">Tokenul a expirat</h1>
+    <p class="body">
+      Au trecut mai mult de 10 minute de la plată.<br>
+      Statistica continuă fără tine.
+    </p>
+    <a class="back-btn" href="/">ÎNAPOI ACASĂ</a>
+  </div>
 {% endblock content %}

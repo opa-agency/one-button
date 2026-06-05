@@ -21,3 +21,11 @@ class PaymentCompleted(models.Model):
 
     def __str__(self):
         return f"Payment for token {self.user_pre_checkout.token} with Stripe payment ID {self.stripe_payment_id}"
+
+    def order_number(self):
+        """Sequential rank among all completed payments (1-based)."""
+        return PaymentCompleted.objects.filter(id__lte=self.id).count()
+
+    def order_number(self):
+        """Sequential rank among completed payments (oldest = 1)."""
+        return PaymentCompleted.objects.filter(id__lte=self.id).count()

@@ -17,7 +17,7 @@ Including another URLconf
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
-from application.views import home_page_view, checkout_finalize_view, dashboard_view, dashboard_admin_view
+from application.views import home_page_view, checkout_finalize_view, dashboard_view, dashboard_admin_view, live_stats_view
 from applicationtwo.views import home_page_view_two
 
 urlpatterns = [
@@ -27,6 +27,7 @@ urlpatterns = [
     path("dashboard/", dashboard_view, name="dashboard"),
     path("dashboard-admin/", dashboard_admin_view, name="dashboard_admin"),
     path("checkout/finalize/", checkout_finalize_view, name="checkout_finalize"),
+    path("api/stats/", live_stats_view, name="live_stats"),
 ]
 
 if settings.DEBUG:

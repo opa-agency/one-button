@@ -1,0 +1,108 @@
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  .status-shell, .status-shell *, .status-shell *::before, .status-shell *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  .status-shell {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --accent: #c8f135;
+    --muted: #2a2a2a;
+    --text: #f0f0f0;
+    --sub: #666;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .status-shell::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.4;
+  }
+  .status-shell .top-line {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: lineGrow 1s ease forwards 0.1s;
+    z-index: 101;
+  }
+  .status-shell .container {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    padding: 2rem;
+    max-width: 480px;
+    width: 100%;
+  }
+  .status-shell .eyebrow {
+    font-size: 0.6rem;
+    letter-spacing: 0.35em;
+    color: var(--sub);
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.3s;
+  }
+  .status-shell .code {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 14vw, 7rem);
+    line-height: 0.9;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.6rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.5s;
+  }
+  .status-shell .headline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    color: var(--text);
+    letter-spacing: 0.05em;
+    margin-bottom: 1.2rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.7s;
+  }
+  .status-shell .body {
+    font-size: 0.78rem;
+    color: var(--sub);
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.9s;
+  }
+  .status-shell .back-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent);
+    color: #0a0a0a;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.15em;
+    padding: 0.85rem 2rem;
+    text-decoration: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 1.1s;
+  }
+  .status-shell .back-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(200,241,53,0.25);
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes lineGrow { to { transform: scaleX(1); } }
+</style>

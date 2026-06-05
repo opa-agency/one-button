@@ -1,8 +1,23 @@
 {% extends "base.html" %}
 
-{% block head_title %}Invalid Token{% endblock head_title %}
+{% block head_title %}Token invalid{% endblock head_title %}
+
+{% block body_class %}status-shell{% endblock body_class %}
+
+{% block extra_head %}
+  {% include 'snippets/status_styles.html' %}
+{% endblock extra_head %}
 
 {% block content %}
-  <h1>Invalid token</h1>
-  <p>The provided token is not associated with a completed payment.</p>
+  <div class="top-line"></div>
+  <div class="container">
+    <p class="eyebrow">acces refuzat</p>
+    <div class="code">404</div>
+    <h1 class="headline">Token invalid</h1>
+    <p class="body">
+      Tokenul ăsta nu e legat de nicio plată confirmată.<br>
+      Poate ai cedat curiozității, dar n-ai mers până la capăt.
+    </p>
+    <a class="back-btn" href="/">PLĂTEȘTE 10 LEI</a>
+  </div>
 {% endblock content %}

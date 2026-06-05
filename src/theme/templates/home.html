@@ -1,154 +1,487 @@
 {% extends "base.html" %}
 
-{% block head_title %}Home{% endblock head_title %}
+{% block head_title %}Plătesc 10 Lei{% endblock head_title %}
+
+{% block body_class %}home-shell{% endblock body_class %}
+
+{% block extra_head %}
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    .home-shell, .home-shell * , .home-shell *::before, .home-shell *::after { box-sizing: border-box; }
+
+    .home-shell {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --accent: #c8f135;
+      --muted: #2a2a2a;
+      --text: #f0f0f0;
+      --sub: #666;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      /* justify-content: center; */
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .home-shell::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0.4;
+    }
+
+    .home-shell .top-line {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      animation: lineGrow 1s ease forwards 0.1s;
+      z-index: 101;
+    }
+
+    .home-shell .container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+        padding: 2rem;
+        max-width: 520px;
+        width: 100%;
+    }
+
+  .home-shell footer {
+    margin-top: auto;
+    padding-top: 2rem;
+    padding-bottom: 1rem;
+  }
+
+    .home-shell .eyebrow {
+      font-size: 0.6rem;
+      letter-spacing: 0.35em;
+      color: var(--sub);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.3s;
+    }
+
+    .home-shell h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 12vw, 5.5rem);
+      line-height: 0.9;
+      color: var(--text);
+      letter-spacing: -0.01em;
+      margin-bottom: 1rem;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.5s;
+    }
+
+    .home-shell h1 .accent { color: var(--accent); }
+
+    .home-shell .lede {
+      font-size: 0.85rem;
+      color: var(--text);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.7s;
+    }
+
+    .home-shell .lede strong { color: var(--accent); font-weight: 500; }
+
+    .home-shell .pay-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent);
+      color: #0a0a0a;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.15em;
+      padding: 1.1rem 2.5rem;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      width: 100%;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 1.1s;
+    }
+
+    .home-shell .pay-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(200,241,53,0.25);
+    }
+
+    .home-shell .pay-btn:active { transform: translateY(0); }
+    .home-shell .pay-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .home-shell .consents {
+      margin-top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+      text-align: left;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 1.3s;
+    }
+
+    .home-shell .consents label {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      font-size: 0.65rem;
+      line-height: 1.6;
+      color: var(--sub);
+      letter-spacing: 0.02em;
+    }
+
+    .home-shell .consents input[type="checkbox"] {
+      margin-top: 0.2rem;
+      width: 14px;
+      height: 14px;
+      accent-color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .home-shell .consents a {
+      color: var(--text);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .home-shell footer {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 1.5s;
+    }
+
+    .home-shell footer nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .home-shell footer nav a {
+      color: var(--sub);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .home-shell footer nav a:hover { color: var(--accent); }
+
+    .home-shell footer .copy {
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      color: var(--sub);
+      text-transform: uppercase;
+    }
+
+    /* Policy modal */
+    .home-shell #policyModal {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .home-shell #policyModal.open { display: flex; }
+    .home-shell #policyModal .modal-card {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--muted);
+      width: 100%;
+      max-width: 720px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 2.5rem 1.5rem 1.5rem;
+      color: var(--text);
+      font-size: 0.78rem;
+      line-height: 1.6;
+    }
+    .home-shell #policyModal .modal-close {
+      position: absolute;
+      top: 0.6rem;
+      right: 0.6rem;
+      background: var(--muted);
+      color: var(--text);
+      border: none;
+      padding: 0.4rem 0.8rem;
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 0.15em;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .home-shell #policyModal .modal-close:hover { background: var(--accent); color: #0a0a0a; }
+
+    /* Live ticker (recent payment messages) */
+    .home-shell .ticker {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 1.5rem;
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      pointer-events: none;
+      max-width: min(280px, calc(100vw - 3rem));
+    }
+
+    .home-shell .tick {
+      background: var(--surface);
+      border: 1px solid var(--muted);
+      border-left: 2px solid var(--accent);
+      padding: 0.6rem 0.9rem;
+      font-size: 0.62rem;
+      color: var(--text);
+      letter-spacing: 0.04em;
+      line-height: 1.5;
+      opacity: 0;
+      transform: translateX(-20px);
+      animation: tickerSlideIn 0.4s ease forwards, tickerFadeOut 0.4s ease forwards 4.6s;
+      word-break: break-word;
+    }
+
+    .home-shell .tick .who {
+      color: var(--accent);
+      font-weight: 500;
+      margin-right: 4px;
+    }
+
+    .home-shell .tick .dot {
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      background: var(--accent);
+      border-radius: 50%;
+      margin-right: 6px;
+      vertical-align: middle;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes tickerSlideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes tickerFadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; transform: translateX(-10px); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
+    }
+    @keyframes lineGrow { to { transform: scaleX(1); } }
+  </style>
+{% endblock extra_head %}
 
 {% block content %}
-  <main class="min-h-screen flex items-center justify-center px-6 py-10">
-    <section class="w-full max-w-105 text-center">
-      <h1 class="text-[46px] leading-none font-black uppercase tracking-tight text-slate-800">PLĂTEȘTE 10 LEI</h1>
-      <p class="mt-5 text-[22px] leading-tight text-slate-700">ca să vezi câți oameni au plătit 10 lei.</p>
+  <div class="top-line"></div>
 
-      <form class="mt-10" method="post" action="{% url 'home' %}?token={{ token|urlencode }}">
-        {% csrf_token %}
-        <div class="mb-5 rounded-xl border border-slate-300/80 bg-white/90 p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_2px_6px_rgba(15,23,42,0.06)]">
-          <label for="currentToken" class="mb-2 flex items-center gap-2 text-left text-[11px] font-extrabold uppercase tracking-[0.11em] text-slate-500">
-            <span class="inline-flex h-5 min-w-5 items-center justify-center rounded-md bg-slate-200 px-1 text-[10px] text-slate-700">ID</span>
-            Token curent
-          </label>
-          <input
-            id="currentToken"
-            type="text"
-            value="{{ token }}"
-            readonly
-            class="h-11 w-full rounded-lg border border-slate-200 bg-gradient-to-b from-white to-slate-50 px-3 font-mono text-[13px] font-semibold tracking-wide text-slate-700 outline-none ring-0"
-          />
-        </div>
-        <input type="hidden" name="token" value="{{ token }}" />
-        <button
-          type="submit"
-          class="h-16 w-full rounded-lg bg-yellow-400 text-[38px] font-black uppercase leading-none tracking-tight text-slate-800 shadow-[0_4px_8px_rgba(0,0,0,0.12)] hover:bg-yellow-300"
-        >
-          PLĂTEȘTE 10 LEI
-        </button>
+  <main class="container">
+    <p class="eyebrow">Statistica în timp real</p>
+    <h1>PLĂTEȘTE <span class="accent">10 LEI</span></h1>
+    <p class="lede">
+      Ca să vezi câți oameni au plătit 10 lei.<br>
+      <strong>Doar curiozitatea</strong> transformata in statistici live
+    </p>
 
-        <div class="mt-9 space-y-4 text-left text-[14px] leading-snug text-slate-500">
-          <label class="flex items-start gap-2">
-            <input id="termsAccepted" type="checkbox" checked required class="mt-0.5 h-4 w-4 rounded border-slate-300 bg-transparent" />
-            <span>
-              Am citit și sunt de acord cu
-              <a
-                href="/termeni-si-conditii/"
-                onclick="return openPopup(event, 'terms')"
-                class="font-semibold text-slate-600 underline"
-              >
-                Termenii si Conditiile.
-              </a>
-            </span>
-          </label>
+    <form method="post" action="{% url 'home' %}?token={{ token|urlencode }}">
+      {% csrf_token %}
+      <input type="hidden" name="token" value="{{ token }}">
+      <button type="submit" class="pay-btn" id="payBtn">PLĂTEȘTE 10 LEI</button>
 
-          <label class="flex items-start gap-2">
-            <input id="deliveryAccepted" type="checkbox" checked required class="mt-0.5 h-4 w-4 rounded border-slate-300 bg-transparent" />
-            <span>
-              Solicit livrarea imediată a informațiilor digitale si Sunt de acord că îmi pierd dreptul de retragere și
-              rambursare.
-            </span>
-          </label>
-        </div>
-      </form>
+      <div class="consents">
+        <label>
+          <input id="termsAccepted" type="checkbox" checked required>
+          <span>Accept <a href="/termeni-si-conditii/" onclick="return openPopup(event, 'terms')">Termenii și Condițiile</a>.</span>
+        </label>
+        <label>
+          <input id="deliveryAccepted" type="checkbox" checked required>
+          <span>
+            Solicit activarea imediată a serviciului digital și accept
+            <a href="/delivery-accepted/" onclick="return openPopup(event, 'delivery')">
+              Politica de Retragere
+            </a>.
+          </span>
+        </label>
+        <label>Prin finalizarea plății, serviciul digital este activat imediat și este furnizat pentru o perioadă de 10 minute, conform 
+          Politicii de Retragere și Rambursare
+        </label>
 
-      <nav class="mt-11 flex items-center justify-center gap-5 text-[13px] text-slate-500 underline">
-        <a href="/termeni-si-conditii/" onclick="return openPopup(event, 'terms')">Termeni si Condiții</a>
-        <a href="/politica-de-confidentialitate/" onclick="return openPopup(event, 'privacy')">Politica de Confidențialitate</a>
-        <a href="/politica-cookies/" onclick="return openPopup(event, 'cookies')">Politica Cookies</a>
-      </nav>
 
-      <p class="mt-5 text-[13px] text-slate-500">© 2024 plateste10lei.ro</p>
-    </section>
+      </div>
+    </form>
+
   </main>
+  <footer class="mt-auto">
+    <nav>
+      <a href="/termeni-si-conditii/" onclick="return openPopup(event, 'terms')">Termeni</a>
+      <a href="/politica-de-confidentialitate/" onclick="return openPopup(event, 'privacy')">Confidențialitate</a>
+      <a href="/politica-contact/" onclick="return openPopup(event, 'contact')">Contact</a>
+    </nav>
+    <p class="copy">© 2026 plateste10lei.ro</p>
+  </footer>
 
-  <div id="policyModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/45 p-4" onclick="closePopup(event)">
-    <div class="relative h-[85vh] w-full max-w-4xl overflow-hidden rounded-lg bg-white shadow-xl">
-      <button
-        type="button"
-        onclick="closePopup()"
-        class="absolute right-3 top-3 z-10 rounded-md bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-700 hover:bg-slate-200"
-      >
-        Închide
-      </button>
-      <div id="policyContent" class="h-full overflow-y-auto px-6 py-12"></div>
+  <div class="ticker" id="ticker"></div>
+
+  <div id="policyModal" onclick="closePopup(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <button type="button" class="modal-close" onclick="closePopup()">ÎNCHIDE</button>
+      <div id="policyContent"></div>
     </div>
   </div>
 
-  <template id="policy-terms">
-    {% include 'snippets/policies/terms.html' %}
-  </template>
-
-  <template id="policy-privacy">
-    {% include 'snippets/policies/privacy.html' %}
-  </template>
-
-  <template id="policy-cookies">
-    {% include 'snippets/policies/cookies.html' %}
-  </template>
+<template id="policy-terms">{% include 'snippets/policies/terms.html' %}</template>
+<template id="policy-privacy">{% include 'snippets/policies/privacy.html' %}</template>
+<template id="policy-contact">{% include 'snippets/policies/contact.html' %}</template>
+<template id="policy-delivery">{% include 'snippets/policies/delivery.html' %}</template>
 
   <script>
-    const policyModal = document.getElementById("policyModal");
-    const policyContent = document.getElementById("policyContent");
-    const policyTemplates = {
-      terms: document.getElementById("policy-terms"),
-      privacy: document.getElementById("policy-privacy"),
-      cookies: document.getElementById("policy-cookies"),
-    };
-    const termsAcceptedCheckbox = document.getElementById("termsAccepted");
-    const deliveryAcceptedCheckbox = document.getElementById("deliveryAccepted");
-    const termsAcceptedStorageKey = "oneButton.termsAccepted";
-    const deliveryAcceptedStorageKey = "oneButton.deliveryAccepted";
+    (function () {
+      const policyModal = document.getElementById('policyModal');
+      const policyContent = document.getElementById('policyContent');
+      const policyTemplates = {
+        terms: document.getElementById('policy-terms'),
+        privacy: document.getElementById('policy-privacy'),
+        contact: document.getElementById('policy-contact'),
+        delivery: document.getElementById('policy-delivery'),
+      };
 
-    function openPopup(event, policyKey) {
-      event.preventDefault();
-      const template = policyTemplates[policyKey];
-      if (!template) {
+      window.openPopup = function (event, key) {
+        event.preventDefault();
+        const tpl = policyTemplates[key];
+        if (!tpl) return false;
+        policyContent.innerHTML = tpl.innerHTML;
+        policyModal.classList.add('open');
+        document.body.style.overflow = 'hidden';
         return false;
+      };
+
+      window.closePopup = function (event) {
+        if (event && event.target !== policyModal && event.currentTarget !== policyModal) return;
+        policyModal.classList.remove('open');
+        policyContent.innerHTML = '';
+        document.body.style.overflow = '';
+      };
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && policyModal.classList.contains('open')) {
+          window.closePopup();
+        }
+      });
+
+      // Persist consent state
+      const terms = document.getElementById('termsAccepted');
+      const delivery = document.getElementById('deliveryAccepted');
+      const tKey = 'oneButton.termsAccepted';
+      const dKey = 'oneButton.deliveryAccepted';
+      try {
+        const tv = localStorage.getItem(tKey);
+        const dv = localStorage.getItem(dKey);
+        if (tv !== null) terms.checked = tv === 'true';
+        if (dv !== null) delivery.checked = dv === 'true';
+      } catch (_) {}
+      function persist() {
+        try {
+          localStorage.setItem(tKey, String(terms.checked));
+          localStorage.setItem(dKey, String(delivery.checked));
+        } catch (_) {}
       }
-      policyContent.innerHTML = template.innerHTML;
-      policyModal.classList.remove("hidden");
-      policyModal.classList.add("flex");
-      document.body.classList.add("overflow-hidden");
-      return false;
-    }
+      terms.addEventListener('change', persist);
+      delivery.addEventListener('change', persist);
+    })();
+  </script>
 
-    function closePopup(event) {
-      if (event && event.target !== policyModal) {
-        return;
+  <script>
+    // Live payment-message ticker
+    (function () {
+      const ticker = document.getElementById('ticker');
+      if (!ticker) return;
+
+      function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, (c) => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[c]));
       }
-      policyModal.classList.add("hidden");
-      policyModal.classList.remove("flex");
-      policyContent.innerHTML = "";
-      document.body.classList.remove("overflow-hidden");
-    }
 
-    document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape" && !policyModal.classList.contains("hidden")) {
-        closePopup();
+      function showTick(html) {
+        const tick = document.createElement('div');
+        tick.className = 'tick';
+        tick.innerHTML = `<span class="dot"></span>${html}`;
+        ticker.appendChild(tick);
+        setTimeout(() => tick.remove(), 5200);
       }
-    });
 
-    function loadCheckboxState(checkbox, storageKey) {
-      const storedValue = localStorage.getItem(storageKey);
-      if (storedValue === null) {
-        return;
+      function tickHtmlFor(payment) {
+        const msg = (payment.message || '').trim();
+        if (msg) {
+          return escapeHtml(msg);
+        }
+        return 'Cineva tocmai a plătit.';
       }
-      checkbox.checked = storedValue === "true";
-    }
 
-    function saveCheckboxState(event) {
-      localStorage.setItem(termsAcceptedStorageKey, String(termsAcceptedCheckbox.checked));
-      localStorage.setItem(deliveryAcceptedStorageKey, String(deliveryAcceptedCheckbox.checked));
-    }
+      const seenIds = new Set();
+      let firstLoad = true;
 
-    loadCheckboxState(termsAcceptedCheckbox, termsAcceptedStorageKey);
-    loadCheckboxState(deliveryAcceptedCheckbox, deliveryAcceptedStorageKey);
-    termsAcceptedCheckbox.addEventListener("change", saveCheckboxState);
-    deliveryAcceptedCheckbox.addEventListener("change", saveCheckboxState);
+      async function pollStats() {
+        try {
+          const r = await fetch('/api/stats/', { headers: { 'Accept': 'application/json' } });
+          if (!r.ok) return;
+          const data = await r.json();
+          if (!Array.isArray(data.latest)) return;
+
+          if (firstLoad) {
+            // Mark existing payments as already seen so page load does not replay history.
+            data.latest.forEach((p) => seenIds.add(p.id));
+            firstLoad = false;
+            return;
+          }
+
+          // New payments since last poll → animate them in oldest-first.
+          const incoming = data.latest.filter((p) => !seenIds.has(p.id)).reverse();
+          incoming.forEach((p, i) => {
+            seenIds.add(p.id);
+            setTimeout(() => showTick(tickHtmlFor(p)), i * 600);
+          });
+        } catch (_) {}
+      }
+
+      pollStats();
+      setInterval(pollStats, 4000);
+    })();
   </script>
 {% endblock content %}

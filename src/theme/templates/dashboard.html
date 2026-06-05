@@ -1,241 +1,451 @@
 {% extends "base.html" %}
 
-{% block head_title %}Home{% endblock head_title %}
+{% block head_title %}Plătesc 10 Lei — Mulțumim{% endblock head_title %}
+
+{% block body_class %}dashboard-shell{% endblock body_class %}
 
 {% block extra_head %}
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
+    .dashboard-shell, .dashboard-shell *, .dashboard-shell *::before, .dashboard-shell *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     .dashboard-shell {
-      --bg: #e7edf5;
-      --ink-900: #1d2a44;
-      --ink-700: #3c4c67;
-      --ink-500: #64748b;
-      --card: #ffffff;
-      --border: #d8e1ee;
-      --accent: #ffd23f;
-      font-family: "Manrope", sans-serif;
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --accent: #c8f135;
+      --muted: #2a2a2a;
+      --text: #f0f0f0;
+      --sub: #666;
       background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
     }
 
-    .dashboard-title {
-      letter-spacing: 0.01em;
-      text-wrap: balance;
-      color: var(--ink-900);
+    .dashboard-shell::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0.4;
     }
 
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 1rem;
+    .dashboard-shell .top-line {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      animation: lineGrow 1s ease forwards 0.1s;
     }
 
-    .payer-row {
-      border-bottom: 1px solid #e2e8f0;
+    .dashboard-shell .container {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      padding: 2rem;
+      max-width: 520px;
+      width: 100%;
     }
 
-    .payer-row:last-child {
-      border-bottom: none;
+    /* Numarul de ordine */
+    .dashboard-shell .ordine-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.35em;
+      color: var(--sub);
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.3s;
     }
 
-    .muted {
-      color: var(--ink-500);
+    .dashboard-shell .ordine-number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5rem, 18vw, 10rem);
+      line-height: 0.9;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.5s;
     }
 
-    @media (max-width: 640px) {
-      .dashboard-title {
-        letter-spacing: 0;
-      }
+    .dashboard-shell .ordine-sub {
+      font-size: 0.65rem;
+      color: var(--sub);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.7s;
+    }
+
+    /* Stats live */
+    .dashboard-shell .stats-row {
+      display: flex;
+      gap: 1px;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.9s;
+    }
+
+    .dashboard-shell .stat-box {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--muted);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .dashboard-shell .stat-box:first-child {
+      border-right: none;
+      border-left: 1px solid var(--muted);
+    }
+
+    .dashboard-shell .stat-label {
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      color: var(--sub);
+      text-transform: uppercase;
+    }
+
+    .dashboard-shell .stat-value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      color: var(--text);
+      letter-spacing: 0.05em;
+    }
+
+    .dashboard-shell .stat-value .unit {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--sub);
+      margin-left: 3px;
+    }
+
+    /* Mesaj ironic */
+    .dashboard-shell .message {
+      font-size: 0.72rem;
+      color: var(--sub);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 1.1s;
+    }
+
+    .dashboard-shell .message strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* Share button */
+    .dashboard-shell .share-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7rem;
+      background: var(--accent);
+      color: #0a0a0a;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 0.15em;
+      padding: 0.9rem 2.5rem;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 1.3s;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .dashboard-shell .share-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(200,241,53,0.25);
+    }
+
+    .dashboard-shell .share-btn:active { transform: translateY(0); }
+
+    .dashboard-shell .share-icon {
+      width: 16px;
+      height: 16px;
+      fill: #0a0a0a;
+    }
+
+    .dashboard-shell .share-sub {
+      margin-top: 0.8rem;
+      font-size: 0.58rem;
+      color: var(--sub);
+      letter-spacing: 0.1em;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 1.5s;
+    }
+
+    /* Ticker */
+    .dashboard-shell .ticker {
+      position: fixed;
+      bottom: 2rem;
+      left: 2rem;
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+
+    .dashboard-shell .tick {
+      background: var(--surface);
+      border: 1px solid var(--muted);
+      border-left: 2px solid var(--accent);
+      padding: 0.6rem 1rem;
+      font-size: 0.62rem;
+      color: var(--text);
+      letter-spacing: 0.05em;
+      max-width: 240px;
+      opacity: 0;
+      transform: translateX(-20px);
+      animation: slideIn 0.4s ease forwards, fadeOut 0.4s ease forwards 3.5s;
+    }
+
+    .dashboard-shell .tick .dot {
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      background: var(--accent);
+      border-radius: 50%;
+      margin-right: 6px;
+      vertical-align: middle;
+      animation: pulse 1.5s infinite;
+    }
+
+    /* Animatii */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    @keyframes lineGrow {
+      to { transform: scaleX(1); }
+    }
+
+    @keyframes bump {
+      from { opacity: 0.5; transform: translateY(3px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dashboard-shell .bump { animation: bump 0.3s ease; }
+
+    /* Timer */
+    .dashboard-shell .timer-block {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 1s;
+    }
+
+    .dashboard-shell .timer-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 1s infinite;
+    }
+
+    .dashboard-shell .timer-text {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--sub);
+      text-transform: uppercase;
+    }
+
+    .dashboard-shell .timer-text strong {
+      color: var(--accent);
+      font-weight: 500;
     }
   </style>
 {% endblock extra_head %}
 
 {% block content %}
-  <main class="dashboard-shell min-h-screen px-4 py-8 sm:px-6 sm:py-10">
-    <section class="mx-auto w-full max-w-3xl">
-      <header class="text-center">
-        <h1 class="dashboard-title text-3xl font-extrabold uppercase sm:text-5xl">AI PLATIT 10 LEI!</h1>
-        <p class="mt-2 text-xl font-semibold text-[var(--ink-700)] sm:text-3xl">
-          Au platit <span class="font-extrabold text-[var(--ink-900)]">{{ completed_payments_count }}</span> oameni
-        </p>
-      </header>
+  <div class="top-line"></div>
 
-      <article class="card mt-6 p-4 sm:p-5">
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p class="text-2xl font-extrabold text-[var(--ink-900)] sm:text-3xl">Esti #{{ completed_payments_count|add:1 }}</p>
-            {% widthratio completed_payments_count 1 10 as total_paid_lei %}
-            <p class="mt-1 text-base text-[var(--ink-700)] sm:text-lg">
-              Suma totala platita: <strong class="text-[var(--ink-900)]">{{ total_paid_lei }} LEI</strong>
-            </p>
-          </div>
-          <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-center">
-            <p class="text-xs font-bold uppercase tracking-wide text-[var(--ink-700)]">Token expira in</p>
-            <p id="token-countdown" class="mt-1 text-2xl font-extrabold text-[var(--ink-900)]">--:--</p>
-          </div>
-        </div>
-      </article>
+  <div class="container"
+       data-count="{{ completed_payments_count|default:0 }}"
+       data-total-lei="{{ total_lei|default:0 }}"
+       data-order="{{ order_number|default:0 }}"
+       data-share-host="{{ share_host|default:'platesc10lei.ro' }}"
+       {% if token_expires_at %}data-expires-at="{{ token_expires_at }}"{% endif %}>
 
-      {% if show_profile_form %}
-        <section class="card mt-4 p-4 sm:p-5">
-          <h2 class="text-lg font-extrabold text-[var(--ink-900)] sm:text-xl">Seteaza numele si mesajul</h2>
-          <form method="post" action="{% url 'dashboard' %}" class="mt-3 space-y-3">
-            {% csrf_token %}
-            <input type="hidden" name="token" value="{{ token }}" />
+    <p class="ordine-label">Numărul tău de ordine</p>
+    <div class="ordine-number">#{{ order_number|default:0 }}</div>
+    <p class="ordine-sub">ai intrat în statistică</p>
 
-            <div>
-              <label for="{{ profile_form.username.id_for_label }}" class="mb-1 block text-sm font-semibold text-[var(--ink-700)]">Nume afisat</label>
-              {{ profile_form.username }}
-              {% for error in profile_form.username.errors %}
-                <p class="mt-1 text-xs font-semibold text-red-600">{{ error }}</p>
-              {% endfor %}
-            </div>
-
-            <div>
-              <label for="{{ profile_form.message.id_for_label }}" class="mb-1 block text-sm font-semibold text-[var(--ink-700)]">Mesaj</label>
-              {{ profile_form.message }}
-              {% for error in profile_form.message.errors %}
-                <p class="mt-1 text-xs font-semibold text-red-600">{{ error }}</p>
-              {% endfor %}
-            </div>
-
-            <button
-              type="submit"
-              class="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-extrabold uppercase tracking-wide text-white transition hover:bg-slate-800"
-            >
-              Salveaza
-            </button>
-          </form>
-        </section>
-      {% endif %}
-
-      <section class="card mt-4 p-2 sm:p-3">
-        {% for payment in recent_payments %}
-          <article class="payer-row flex items-center justify-between gap-3 px-3 py-3 sm:px-4">
-            <div class="min-w-0">
-              <p class="truncate text-xl font-extrabold leading-tight text-[var(--ink-900)]">
-                {{ payment.user_pre_checkout.username|default:"Anonim" }}
-              </p>
-              {% if payment.user_pre_checkout.message %}
-                <p class="muted truncate text-sm">{{ payment.user_pre_checkout.message }}</p>
-              {% else %}
-                <p class="muted text-sm">fara mesaj</p>
-              {% endif %}
-              <p class="muted text-xs">{{ payment.created_at|timesince }} in urma</p>
-            </div>
-            <p class="shrink-0 text-base font-extrabold text-[var(--ink-900)] sm:text-xl">10 LEI</p>
-          </article>
-        {% empty %}
-          <p class="px-3 py-4 text-sm text-[var(--ink-700)]">Inca nu exista plati afisabile.</p>
-        {% endfor %}
-      </section>
-
-      <article class="card mt-4 p-4 text-sm text-[var(--ink-700)] sm:text-base">
-        Lista de platitori este <strong>anonima</strong>. Nu colectam si nu afisam informatii personale.
-      </article>
-
-      <nav class="mt-6 flex flex-wrap items-center justify-center gap-4 text-xs text-slate-500 underline sm:text-sm">
-        <a href="/termeni-si-conditii/" onclick="return openPopup(event, 'terms')">Termeni si Conditii</a>
-        <a href="/politica-de-confidentialitate/" onclick="return openPopup(event, 'privacy')">Politica de Confidentialitate</a>
-        <a href="/politica-cookies/" onclick="return openPopup(event, 'cookies')">Politica Cookies</a>
-      </nav>
-
-      <p class="mt-3 pb-4 text-center text-xs text-slate-500">© 2024 plateste10lei.ro</p>
-    </section>
-  </main>
-
-  <div id="policyModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/45 p-4" onclick="closePopup(event)">
-    <div class="relative h-[85vh] w-full max-w-4xl overflow-hidden rounded-lg bg-white shadow-xl">
-      <button
-        type="button"
-        onclick="closePopup()"
-        class="absolute right-3 top-3 z-10 rounded-md bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-700 hover:bg-slate-200"
-      >
-        Inchide
-      </button>
-      <div id="policyContent" class="h-full overflow-y-auto px-6 py-12"></div>
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-label">Total plătitori</div>
+        <div class="stat-value" id="totalPlatitori">{{ completed_payments_count|default:0 }}<span class="unit">pers.</span></div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Total colectat</div>
+        <div class="stat-value" id="totalSuma">{{ total_lei|default:0 }}<span class="unit">RON</span></div>
+      </div>
     </div>
+
+    <div class="timer-block">
+      <div class="timer-dot"></div>
+      <div class="timer-text">statistica live · actualizată acum <strong id="timerCount">10:00</strong></div>
+    </div>
+
+    <p class="message">
+      Ai plătit 10 lei și ai primit ce ai cumpărat —<br>
+      <strong>statistica în timp real.</strong><br>
+      Acum întrebarea e: cedează și prietenii tăi?
+    </p>
+
+    <button class="share-btn" onclick="doShare()">
+      <svg class="share-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
+      </svg>
+      DISTRIBUIE NUMĂRUL TĂU
+    </button>
+
+    <p class="share-sub" id="shareSub">Sunt #{{ order_number|default:0 }}. Tu ai curaj? — {{ share_host|default:'platesc10lei.ro' }}</p>
   </div>
 
-  <template id="policy-terms">
-    {% include 'snippets/policies/terms.html' %}
-  </template>
-
-  <template id="policy-privacy">
-    {% include 'snippets/policies/privacy.html' %}
-  </template>
-
-  <template id="policy-cookies">
-    {% include 'snippets/policies/cookies.html' %}
-  </template>
+  <div class="ticker" id="ticker"></div>
 
   <script>
     (function () {
-      const countdownElement = document.getElementById("token-countdown");
-      const expiresAt = new Date("{{ token_expires_at|escapejs }}").getTime();
-      const policyModal = document.getElementById("policyModal");
-      const policyContent = document.getElementById("policyContent");
-      const policyTemplates = {
-        terms: document.getElementById("policy-terms"),
-        privacy: document.getElementById("policy-privacy"),
-        cookies: document.getElementById("policy-cookies"),
-      };
+      const root = document.querySelector('.container');
+      const orderNumber = parseInt(root.dataset.order, 10) || 0;
+      const shareHost = root.dataset.shareHost || 'platesc10lei.ro';
+      let count = parseInt(root.dataset.count, 10) || 0;
+      let suma = parseInt(root.dataset.totalLei, 10) || (count * 10);
 
-      function formatRemaining(ms) {
-        const totalSeconds = Math.max(0, Math.floor(ms / 1000));
-        const minutes = Math.floor(totalSeconds / 60);
-        const seconds = totalSeconds % 60;
-        return String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0");
+      // Token expiry: derive remaining seconds from server-rendered ISO timestamp
+      const expiresAtRaw = root.dataset.expiresAt;
+      const expiresAt = expiresAtRaw ? new Date(expiresAtRaw).getTime() : NaN;
+      let seconds = Number.isFinite(expiresAt)
+        ? Math.max(0, Math.floor((expiresAt - Date.now()) / 1000))
+        : 600;
+
+      function formatNumber(n) {
+        return n.toLocaleString('ro-RO');
       }
 
-      function updateCountdown() {
-        if (Number.isNaN(expiresAt)) {
-          countdownElement.textContent = "--:--";
-          clearInterval(timerId);
-          return;
-        }
+      const totalPlatitoriEl = document.getElementById('totalPlatitori');
+      const totalSumaEl = document.getElementById('totalSuma');
 
-        const remaining = expiresAt - Date.now();
-        if (remaining <= 0) {
-          countdownElement.textContent = "Expired";
-          clearInterval(timerId);
-          return;
-        }
-        countdownElement.textContent = formatRemaining(remaining);
+      function updateStats() {
+        totalPlatitoriEl.innerHTML = formatNumber(count) + '<span class="unit">pers.</span>';
+        totalSumaEl.innerHTML = formatNumber(suma) + '<span class="unit">RON</span>';
+        totalPlatitoriEl.classList.remove('bump'); void totalPlatitoriEl.offsetWidth; totalPlatitoriEl.classList.add('bump');
+        totalSumaEl.classList.remove('bump'); void totalSumaEl.offsetWidth; totalSumaEl.classList.add('bump');
+      }
+      // Render initial values formatted ro-RO
+      updateStats();
+
+      // Timer
+      const timerEl = document.getElementById('timerCount');
+      function updateTimer() {
+        const min = Math.floor(seconds / 60);
+        const sec = seconds % 60;
+        timerEl.textContent = String(min).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+        if (seconds > 0) seconds--;
+      }
+      setInterval(updateTimer, 1000);
+      updateTimer();
+
+      // Ticker
+      function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, (c) => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[c]));
       }
 
-      updateCountdown();
-      const timerId = setInterval(updateCountdown, 1000);
+      function showTick(msg) {
+        const ticker = document.getElementById('ticker');
+        const tick = document.createElement('div');
+        tick.className = 'tick';
+        tick.innerHTML = `<span class="dot"></span>${escapeHtml(msg)}`;
+        ticker.appendChild(tick);
+        setTimeout(() => tick.remove(), 4200);
+      }
 
-      window.openPopup = function openPopup(event, policyKey) {
-        event.preventDefault();
-        const template = policyTemplates[policyKey];
-        if (!template) {
-          return false;
+      // Real-time polling
+      const seenIds = new Set();
+      let firstPoll = true;
+      async function pollStats() {
+        try {
+          const r = await fetch('/api/stats/', { headers: { 'Accept': 'application/json' } });
+          if (!r.ok) return;
+          const data = await r.json();
+          // Seed seenIds on first response so page load does not replay history.
+          if (Array.isArray(data.latest)) {
+            data.latest.forEach((p) => {
+              if (!seenIds.has(p.id)) {
+                if (!firstPoll) {
+                  const num = Number.isFinite(p.order_number) ? p.order_number : p.id;
+                  const txt = (p.message || '').trim();
+                  const msg = txt ? `#${num}: ${txt}` : `#${num} tocmai a plătit.`;
+                  showTick(msg);
+                }
+                seenIds.add(p.id);
+              }
+            });
+          }
+          firstPoll = false;
+          if (typeof data.count === 'number' && data.count !== count) {
+            count = data.count;
+            suma = (typeof data.total_lei === 'number') ? data.total_lei : count * 10;
+            updateStats();
+          }
+        } catch (_) {}
+      }
+      pollStats();
+      setInterval(pollStats, 4000);
+
+      // Share
+      window.doShare = function () {
+        const text = `Sunt #${formatNumber(orderNumber)} în statistica asta. Tu ai curaj? ${shareHost}`;
+        if (navigator.share) {
+          navigator.share({ text }).catch(() => {});
+        } else if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(() => {
+            const btn = document.querySelector('.share-btn');
+            const original = btn.innerHTML;
+            btn.textContent = 'COPIAT!';
+            setTimeout(() => { btn.innerHTML = original; }, 2000);
+          });
         }
-        policyContent.innerHTML = template.innerHTML;
-        policyModal.classList.remove("hidden");
-        policyModal.classList.add("flex");
-        document.body.classList.add("overflow-hidden");
-        return false;
       };
-
-      window.closePopup = function closePopup(event) {
-        if (event && event.target !== policyModal) {
-          return;
-        }
-        policyModal.classList.add("hidden");
-        policyModal.classList.remove("flex");
-        policyContent.innerHTML = "";
-        document.body.classList.remove("overflow-hidden");
-      };
-
-      document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape" && !policyModal.classList.contains("hidden")) {
-          window.closePopup();
-        }
-      });
     })();
   </script>
 {% endblock content %}

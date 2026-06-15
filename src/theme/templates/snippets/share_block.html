@@ -1,0 +1,121 @@
+{% with block_id=share_block_id|default:"share-block" %}
+  <section class="panel share-block" id="{{ block_id }}">
+    <h2 class="share-title">{{ share_title|default:"Distribuie rapid" }}</h2>
+    {% if share_description %}
+      <p class="share-copy">{{ share_description }}</p>
+    {% endif %}
+
+    <div class="share-actions">
+      <button
+        type="button"
+        class="share-action primary"
+        data-share-button
+        data-share-title="{{ share_data_title|default:share_title|default:'Distribuie' }}"
+        data-share-text="{{ share_text|default:"" }}"
+        data-share-url="{{ share_url|default:"" }}"
+        data-share-image="{{ share_image_url|default:"" }}"
+        data-share-loading="{{ share_loading_label|default:'Se pregătește...' }}"
+        data-share-success="{{ share_success_label|default:'Trimis' }}"
+        data-share-fallback="{{ share_copied_label|default:'Link copiat' }}"
+        data-share-error="{{ share_error_label|default:'Nu am putut partaja' }}"
+        data-share-message-duration="{{ share_message_duration|default:2000 }}"
+      >
+        {{ share_native_label|default:"Share" }}
+      </button>
+    </div>
+
+    {% if share_hint %}
+      <p class="share-hint">{{ share_hint }}</p>
+    {% endif %}
+  </section>
+
+  <style>
+    .share-block {
+      margin-top: 14px;
+      padding: 22px;
+      border: 1px solid var(--line, #303030);
+      background: var(--panel, rgba(255, 255, 255, 0.04));
+      color: var(--text, #f3f3f3);
+    }
+
+    .share-block .share-title {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.1;
+      font-weight: 900;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .share-block .share-copy {
+      margin: 10px 0 0;
+      color: var(--muted, #9a9a9a);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .share-block .share-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .share-block .share-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      border: 1px solid var(--line, #303030);
+      background: rgba(5, 5, 5, 0.92);
+      color: var(--text, #f3f3f3);
+      padding: 0 22px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-align: center;
+      text-decoration: none;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+    }
+
+    .share-block .share-action:hover {
+      border-color: var(--accent, #ffdf21);
+      color: var(--accent, #ffdf21);
+    }
+
+    .share-block .share-action.primary {
+      border-color: var(--accent, #ffdf21);
+      background: var(--accent, #ffdf21);
+      color: #050505;
+    }
+
+    .share-block .share-action.primary:hover {
+      background: #ffe84f;
+      color: #050505;
+    }
+
+    .share-block .share-action[disabled] {
+      opacity: 0.6;
+      cursor: default;
+    }
+
+    .share-block .share-hint {
+      margin: 12px 0 0;
+      color: var(--muted, #9a9a9a);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 640px) {
+      .share-block {
+        padding: 16px;
+      }
+
+      .share-block .share-action {
+        width: 100%;
+      }
+    }
+  </style>
+{% endwith %}

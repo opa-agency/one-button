@@ -5,6 +5,18 @@
 {% block body_class %}dashboard-shell{% endblock body_class %}
 
 {% block extra_head %}
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ share_meta_title }}">
+  <meta property="og:description" content="{{ share_meta_description }}">
+  <meta property="og:url" content="{{ share_meta_url }}">
+  <meta property="og:image" content="{{ share_image_url }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="description" content="{{ share_meta_description }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ share_meta_title }}">
+  <meta name="twitter:description" content="{{ share_meta_description }}">
+  <meta name="twitter:image" content="{{ share_image_url }}">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     .dashboard-shell, .dashboard-shell *, .dashboard-shell *::before, .dashboard-shell *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -149,48 +161,6 @@
       font-weight: 500;
     }
 
-    /* Share button */
-    .dashboard-shell .share-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.7rem;
-      background: var(--accent);
-      color: #0a0a0a;
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.2rem;
-      letter-spacing: 0.15em;
-      padding: 0.9rem 2.5rem;
-      border: none;
-      cursor: pointer;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-      opacity: 0;
-      animation: fadeUp 0.7s ease forwards 1.3s;
-      width: 100%;
-      justify-content: center;
-    }
-
-    .dashboard-shell .share-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(200,241,53,0.25);
-    }
-
-    .dashboard-shell .share-btn:active { transform: translateY(0); }
-
-    .dashboard-shell .share-icon {
-      width: 16px;
-      height: 16px;
-      fill: #0a0a0a;
-    }
-
-    .dashboard-shell .share-sub {
-      margin-top: 0.8rem;
-      font-size: 0.58rem;
-      color: var(--sub);
-      letter-spacing: 0.1em;
-      opacity: 0;
-      animation: fadeUp 0.7s ease forwards 1.5s;
-    }
-
     /* Ticker */
     .dashboard-shell .ticker {
       position: fixed;
@@ -290,6 +260,45 @@
       color: var(--accent);
       font-weight: 500;
     }
+
+    .dashboard-shell .capture-warning {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: #0a0a0a;
+      color: var(--accent);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.4rem, 9vw, 7rem);
+      letter-spacing: 0.05em;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .dashboard-shell.capture-blocked .capture-warning {
+      display: flex;
+    }
+
+    @media print {
+      .dashboard-shell .container,
+      .dashboard-shell .ticker,
+      .dashboard-shell .top-line {
+        display: none !important;
+      }
+
+      .dashboard-shell::after {
+        content: "Screenshot denied";
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        color: var(--accent);
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 48px;
+      }
+    }
   </style>
 {% endblock extra_head %}
 
@@ -300,7 +309,6 @@
        data-count="{{ completed_payments_count|default:0 }}"
        data-total-lei="{{ total_lei|default:0 }}"
        data-order="{{ order_number|default:0 }}"
-       data-share-host="{{ share_host|default:'platesc10lei.ro' }}"
        {% if token_expires_at %}data-expires-at="{{ token_expires_at }}"{% endif %}>
 
     <p class="ordine-label">Numărul tău de ordine</p>
@@ -320,7 +328,7 @@
 
     <div class="timer-block">
       <div class="timer-dot"></div>
-      <div class="timer-text">statistica live · actualizată acum <strong id="timerCount">10:00</strong></div>
+      <div class="timer-text">statistica live · acces rămas <strong id="timerCount">03:00</strong></div>
     </div>
 
     <p class="message">
@@ -329,23 +337,18 @@
       Acum întrebarea e: cedează și prietenii tăi?
     </p>
 
-    <button class="share-btn" onclick="doShare()">
-      <svg class="share-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
-      </svg>
-      DISTRIBUIE NUMĂRUL TĂU
-    </button>
-
-    <p class="share-sub" id="shareSub">Sunt #{{ order_number|default:0 }}. Tu ai curaj? — {{ share_host|default:'platesc10lei.ro' }}</p>
+    {% with share_block_id="dashboard-share" share_url=share_url share_text=share_text share_image_url=share_image_url share_title="Distribuie rapid" share_description="WhatsApp și Facebook se deschid direct. Instagram și TikTok copiază mesajul ca să-l lipești, iar butonul Share folosește share sheet-ul telefonului sau copiază linkul." share_copied_label="Copiat" share_native_label="Share" %}
+      {% include "snippets/share_block.html" %}
+    {% endwith %}
   </div>
 
   <div class="ticker" id="ticker"></div>
+  <div class="capture-warning" aria-hidden="true">Screenshot denied</div>
 
   <script>
     (function () {
       const root = document.querySelector('.container');
       const orderNumber = parseInt(root.dataset.order, 10) || 0;
-      const shareHost = root.dataset.shareHost || 'platesc10lei.ro';
       let count = parseInt(root.dataset.count, 10) || 0;
       let suma = parseInt(root.dataset.totalLei, 10) || (count * 10);
 
@@ -354,7 +357,7 @@
       const expiresAt = expiresAtRaw ? new Date(expiresAtRaw).getTime() : NaN;
       let seconds = Number.isFinite(expiresAt)
         ? Math.max(0, Math.floor((expiresAt - Date.now()) / 1000))
-        : 600;
+        : 180;
 
       function formatNumber(n) {
         return n.toLocaleString('ro-RO');
@@ -432,20 +435,26 @@
       pollStats();
       setInterval(pollStats, 4000);
 
-      // Share
-      window.doShare = function () {
-        const text = `Sunt #${formatNumber(orderNumber)} în statistica asta. Tu ai curaj? ${shareHost}`;
-        if (navigator.share) {
-          navigator.share({ text }).catch(() => {});
-        } else if (navigator.clipboard) {
-          navigator.clipboard.writeText(text).then(() => {
-            const btn = document.querySelector('.share-btn');
-            const original = btn.innerHTML;
-            btn.textContent = 'COPIAT!';
-            setTimeout(() => { btn.innerHTML = original; }, 2000);
-          });
+      function showCaptureWarning() {
+        document.body.classList.add('capture-blocked');
+        setTimeout(() => {
+          document.body.classList.remove('capture-blocked');
+        }, 1400);
+      }
+
+      document.addEventListener('keydown', function (event) {
+        const key = String(event.key || '').toLowerCase();
+        if (
+          key === 'printscreen' ||
+          (event.ctrlKey && key === 'p') ||
+          (event.metaKey && key === 'p') ||
+          (event.ctrlKey && event.shiftKey && ['s', 'i', 'j', 'c'].includes(key)) ||
+          (event.metaKey && event.shiftKey && ['s', 'i', 'j', 'c'].includes(key))
+        ) {
+          event.preventDefault();
+          showCaptureWarning();
         }
-      };
+      });
     })();
   </script>
 {% endblock content %}

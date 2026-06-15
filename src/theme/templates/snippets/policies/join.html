@@ -1,7 +1,7 @@
-<h1>ALATURATE NOUA</h1>
+<h1>Alătura-te nouă</h1>
 
 <p>
-  Aceasta politica descrie modul in care utilizatorii pot deveni parteneri ai platformei <em>plateste10lei.ro</em>.
+  Aceasta politica descrie modul in care utilizatorii pot deveni parteneri ai platformei <em>platesc10lei.ro</em>.
 </p>
 
 <hr>
@@ -30,4 +30,28 @@
 
 <p>
   In acest dashboard, partenerii vor putea vedea persoanele care au efectuat plata folosind linkul lor de invitatie.
+</p>
+
+<p style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1rem;">
+  {% if user.is_authenticated %}
+  <a
+    href="{% url 'partner_dashboard' %}"
+    style="display: inline-block; padding: 0.7rem 1rem; background: #ffd447; color: #0a0a0a; font-weight: 700; text-decoration: none;"
+  >
+    Go to dashboard
+  </a>
+  {% else %}
+  <a
+    href="{% url 'login' %}"
+    style="display: inline-block; padding: 0.7rem 1rem; background: #ffd447; color: #0a0a0a; font-weight: 700; text-decoration: none;"
+  >
+    loghează-te
+  </a>
+  <a
+    href="{% url 'register' %}"
+    style="display: inline-block; padding: 0.7rem 1rem; border: 1px solid #ffd447; color: #ffd447; font-weight: 700; text-decoration: none;"
+  >
+    Înregistrează-te
+  </a>
+  {% endif %}
 </p>

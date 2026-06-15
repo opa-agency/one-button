@@ -5,6 +5,18 @@
 {% block body_class %}home-shell{% endblock body_class %}
 
 {% block extra_head %}
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ share_meta_title }}">
+  <meta property="og:description" content="{{ share_meta_description }}">
+  <meta property="og:url" content="{{ share_meta_url }}">
+  <meta property="og:image" content="{{ share_image_url }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="description" content="{{ share_meta_description }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ share_meta_title }}">
+  <meta name="twitter:description" content="{{ share_meta_description }}">
+  <meta name="twitter:image" content="{{ share_image_url }}">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     .home-shell, .home-shell * , .home-shell *::before, .home-shell *::after { box-sizing: border-box; }
@@ -322,6 +334,7 @@
     <form method="post" action="{% url 'home' %}?token={{ token|urlencode }}">
       {% csrf_token %}
       <input type="hidden" name="token" value="{{ token }}">
+      {% if refferal %}<input type="hidden" name="refferal" value="{{ refferal }}">{% endif %}
       <button type="submit" class="pay-btn" id="payBtn">PLĂTEȘTE 10 LEI</button>
 
       <div class="consents">
@@ -338,7 +351,7 @@
             </a>.
           </span>
         </label>
-        <label>Prin finalizarea plății, serviciul digital este activat imediat și este furnizat pentru o perioadă de 10 minute, conform 
+        <label>Prin finalizarea plății, serviciul digital este activat imediat și este furnizat pentru o perioadă de 3 minute, conform 
           Politicii de Retragere și Rambursare
         </label>
 
@@ -352,9 +365,9 @@
       <a href="/termeni-si-conditii/" onclick="return openPopup(event, 'terms')">Termeni</a>
       <a href="/politica-de-confidentialitate/" onclick="return openPopup(event, 'privacy')">Confidențialitate</a>
       <a href="/politica-contact/" onclick="return openPopup(event, 'contact')">Contact</a>
-      <a href="/alaturate-noua/" onclick="return openPopup(event, 'join')">Alaturate noua</a>
+      <a href="/alaturate-noua/" onclick="return openPopup(event, 'join')">Alătura-te nouă</a>
     </nav>
-    <p class="copy">© 2026 plateste10lei.ro</p>
+    <p class="copy">© 2026 platesc10lei.ro</p>
   </footer>
 
   <div class="ticker" id="ticker"></div>

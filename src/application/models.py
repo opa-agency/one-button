@@ -1,10 +1,18 @@
 from django.db import models
+from django.conf import settings
 import stripe 
 
 
 class UserPreCheckout(models.Model):
     token = models.CharField(max_length=255, unique=True)
     checkout_session_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
+    referral_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        related_name="referred_pre_checkouts",
+        null=True,
+        blank=True,
+    )
     username = models.CharField(max_length=255, null=True, blank=True)
     message = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)

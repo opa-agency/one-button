@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+
+{% block head_title %}Dashboard partener{% endblock head_title %}
+
+{% block body_class %}partner-shell{% endblock body_class %}
+
+{% block extra_head %}
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ share_meta_title }}">
+  <meta property="og:description" content="{{ share_meta_description }}">
+  <meta property="og:url" content="{{ share_meta_url }}">
+  <meta property="og:image" content="{{ share_image_url }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="description" content="{{ share_meta_description }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ share_meta_title }}">
+  <meta name="twitter:description" content="{{ share_meta_description }}">
+  <meta name="twitter:image" content="{{ share_image_url }}">
+  <style>
+    .partner-shell,
+    .partner-shell * {
+      box-sizing: border-box;
+    }
+
+    .partner-shell {
+      --bg: #0a0a0a;
+      --panel: #111111;
+      --panel-soft: #151515;
+      --line: #303030;
+      --text: #f3f3f3;
+      --muted: #9a9a9a;
+      --accent: #ffdf21;
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .partner-page {
+      width: min(1180px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 32px 0 48px;
+    }
+
+    .partner-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .partner-kicker {
+      margin: 0 0 14px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+    }
+
+    .partner-title {
+      margin: 0;
+      max-width: 760px;
+      font-size: clamp(32px, 5vw, 56px);
+      line-height: 0.95;
+      font-weight: 900;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .partner-lede {
+      margin: 16px 0 0;
+      max-width: 680px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .logout-btn,
+    .copy-btn {
+      height: 44px;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--text);
+      padding: 0 18px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .logout-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .referral-panel {
+      margin-top: 24px;
+      padding: 22px;
+    }
+
+    .panel-label {
+      display: block;
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .copy-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 150px;
+      gap: 10px;
+    }
+
+    .referral-input {
+      width: 100%;
+      height: 48px;
+      border: 1px solid var(--line);
+      background: #050505;
+      color: var(--text);
+      padding: 0 14px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .copy-btn {
+      border: none;
+      background: var(--accent);
+      color: #050505;
+    }
+
+    .copy-btn:hover {
+      background: #ffe84f;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .stat-card {
+      min-height: 104px;
+      border: 1px solid var(--line);
+      background: var(--panel-soft);
+      padding: 18px;
+    }
+
+    .stat-label {
+      margin: 0;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .stat-value {
+      margin: 12px 0 0;
+      color: var(--accent);
+      font-size: 28px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .stat-value.username {
+      color: var(--text);
+      overflow-wrap: anywhere;
+      font-size: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .partner-header {
+        display: grid;
+      }
+
+      .logout-btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .partner-page {
+        width: min(100% - 20px, 1180px);
+        padding-top: 20px;
+      }
+
+      .copy-row,
+      .stats-grid,
+      .share-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .copy-btn {
+        width: 100%;
+      }
+
+      .referral-panel,
+      .share-block,
+      .stat-card {
+        padding: 16px;
+      }
+    }
+  </style>
+{% endblock extra_head %}
+
+{% block content %}
+  <main class="partner-page">
+    <header class="partner-header">
+      <div>
+        <p class="partner-kicker">Partner dashboard</p>
+        <h1 class="partner-title">Linkul tau de invitatie</h1>
+        <p class="partner-lede">
+          Distribuie linkul tau. Fiecare plata finalizata prin acest link apare aici si adauga 1 RON la comisionul tau estimat.
+        </p>
+      </div>
+
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="logout-btn">Logout</button>
+      </form>
+    </header>
+
+    <section class="panel referral-panel">
+      <label for="referralLink" class="panel-label">Referral link</label>
+      <div class="copy-row">
+        <input
+          id="referralLink"
+          class="referral-input"
+          type="text"
+          readonly
+          value="{{ referral_url }}"
+        >
+        <button type="button" class="copy-btn" onclick="copyReferralLink()">Copy link</button>
+      </div>
+    </section>
+
+    <section class="stats-grid" aria-label="Rezumat referral">
+      <div class="stat-card">
+        <p class="stat-label">Plati referral</p>
+        <p class="stat-value">{{ referred_payments_count }}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Comision estimat</p>
+        <p class="stat-value">{{ referral_total_ron }} RON</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Partener</p>
+        <p class="stat-value username">{{ request.user.username }}</p>
+      </div>
+    </section>
+
+    {% with share_block_id="partner-share" share_url=referral_url share_text=referral_share_text share_image_url=share_image_url share_title="Distribuie rapid" share_description="WhatsApp și Facebook se deschid direct. Instagram și TikTok copiază mesajul tău, iar butonul Share folosește share sheet-ul sau copiază linkul." share_copied_label="Copiat" share_native_label="Share" %}
+      {% include "snippets/share_block.html" %}
+    {% endwith %}
+  </main>
+
+  <script>
+    function copyReferralLink() {
+      const input = document.getElementById('referralLink');
+      input.select();
+      input.setSelectionRange(0, input.value.length);
+
+      const button = document.querySelector('.copy-btn');
+      const original = button.textContent;
+      const done = () => {
+        button.textContent = 'Copied';
+        setTimeout(() => { button.textContent = original; }, 1600);
+      };
+
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(input.value).then(done).catch(() => {});
+      } else {
+        document.execCommand('copy');
+        done();
+      }
+    }
+  </script>
+{% endblock content %}

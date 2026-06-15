@@ -154,12 +154,12 @@ AUTH_PASSWORD_VALIDATORS = [
 # ACCOUNT_EMAIL_VERIFICATION = 'mandatory' # Deprecated
 # ACCOUNT_LOGIN_METHODS = {'username', 'email'}
 AUTHENTICATION_BACKENDS = [
-    # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
-
-    # `allauth` specific authentication methods, such as login by email
-    'allauth.account.auth_backends.AuthenticationBackend',
 ]
+
+LOGIN_URL = "/accounts/login/"
+LOGIN_REDIRECT_URL = "/partner-dashboard/"
+LOGOUT_REDIRECT_URL = "/"
 
 
 # Provider specific settings

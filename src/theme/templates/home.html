@@ -352,6 +352,7 @@
       <a href="/termeni-si-conditii/" onclick="return openPopup(event, 'terms')">Termeni</a>
       <a href="/politica-de-confidentialitate/" onclick="return openPopup(event, 'privacy')">Confidențialitate</a>
       <a href="/politica-contact/" onclick="return openPopup(event, 'contact')">Contact</a>
+      <a href="/alaturate-noua/" onclick="return openPopup(event, 'join')">Alaturate noua</a>
     </nav>
     <p class="copy">© 2026 plateste10lei.ro</p>
   </footer>
@@ -369,6 +370,7 @@
 <template id="policy-privacy">{% include 'snippets/policies/privacy.html' %}</template>
 <template id="policy-contact">{% include 'snippets/policies/contact.html' %}</template>
 <template id="policy-delivery">{% include 'snippets/policies/delivery.html' %}</template>
+<template id="policy-join">{% include 'snippets/policies/join.html' %}</template>
 
   <script>
     (function () {
@@ -379,6 +381,7 @@
         privacy: document.getElementById('policy-privacy'),
         contact: document.getElementById('policy-contact'),
         delivery: document.getElementById('policy-delivery'),
+        join: document.getElementById('policy-join'),
       };
 
       window.openPopup = function (event, key) {

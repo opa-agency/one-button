@@ -28,12 +28,16 @@ from application.views import (
     partner_dashboard_view,
     register_view,
 )
+from application.forms import EmailAuthenticationForm
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path(
         "accounts/login/",
-        LoginView.as_view(redirect_authenticated_user=True),
+        LoginView.as_view(
+            redirect_authenticated_user=True,
+            authentication_form=EmailAuthenticationForm,
+        ),
         name="login",
     ),
     path("accounts/register/", register_view, name="register"),

@@ -4,7 +4,6 @@ from datetime import timedelta
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth import login
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.http import HttpResponseNotAllowed, HttpResponse, JsonResponse
@@ -16,6 +15,7 @@ from decouple import config
 import stripe
 
 from .models import UserPreCheckout, PaymentCompleted
+from .forms import PartnerSignUpForm
 from .messages import random_payment_message
 
 STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY")
@@ -67,13 +67,13 @@ def register_view(request):
         return redirect("partner_dashboard")
 
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = PartnerSignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
             return redirect("partner_dashboard")
     else:
-        form = UserCreationForm()
+        form = PartnerSignUpForm()
 
     return render(request, "registration/register.html", {"form": form})
 

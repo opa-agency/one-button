@@ -72,22 +72,8 @@ ARG PROJ_NAME="core"
 # the container starts and the database is available
 RUN printf "#!/bin/bash\n" > ./paracord_runner.sh && \
     printf "RUN_PORT=\"\${PORT:-8000}\"\n\n" >> ./paracord_runner.sh && \
-    printf "TAILWIND_CSS=\"staticfiles/css/dist/styles.css\"\n\n" >> ./paracord_runner.sh && \
-    printf "COLLECTED_TAILWIND_CSS=\"local-cdn/css/dist/styles.css\"\n\n" >> ./paracord_runner.sh && \
     printf "python manage.py migrate --no-input\n" >> ./paracord_runner.sh && \
     printf "python manage.py ensure_superuser\n" >> ./paracord_runner.sh && \
-    printf "if command -v npm >/dev/null 2>&1 || [ -n \"\${NPM_BIN_PATH:-}\" ]; then\n" >> ./paracord_runner.sh && \
-    printf "  python manage.py tailwind build\n" >> ./paracord_runner.sh && \
-    printf "elif [ -f \"\$TAILWIND_CSS\" ]; then\n" >> ./paracord_runner.sh && \
-    printf "  echo \"npm not available; using prebuilt Tailwind CSS at \$TAILWIND_CSS\"\n" >> ./paracord_runner.sh && \
-    printf "elif [ -f \"\$COLLECTED_TAILWIND_CSS\" ]; then\n" >> ./paracord_runner.sh && \
-    printf "  echo \"npm not available; using collected Tailwind CSS at \$COLLECTED_TAILWIND_CSS\"\n" >> ./paracord_runner.sh && \
-    printf "  exec gunicorn ${PROJ_NAME}.wsgi:application --bind \"[::]:\$RUN_PORT\"\n" >> ./paracord_runner.sh && \
-    printf "else\n" >> ./paracord_runner.sh && \
-    printf "  echo \"npm not available and neither \$TAILWIND_CSS nor \$COLLECTED_TAILWIND_CSS exists; cannot serve Tailwind CSS\" >&2\n" >> ./paracord_runner.sh && \
-    printf "  exit 1\n" >> ./paracord_runner.sh && \
-    printf "fi\n" >> ./paracord_runner.sh && \
-    printf "python manage.py collectstatic --no-input\n" >> ./paracord_runner.sh && \
     printf "gunicorn ${PROJ_NAME}.wsgi:application --bind \"[::]:\$RUN_PORT\"\n" >> ./paracord_runner.sh
 
 # make the bash script executable

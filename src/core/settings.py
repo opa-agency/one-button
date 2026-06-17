@@ -195,9 +195,7 @@ STATICFILES_BASE_DIR = BASE_DIR / "staticfiles"
 STATICFILES_VENDOR_DIR = STATICFILES_BASE_DIR / "vendor"
 
 # source for collectstatic
-STATICFILES_DIRS = [
-    STATICFILES_BASE_DIR,
-]
+STATICFILES_DIRS = [STATICFILES_BASE_DIR]
 
 # output for collectstatic
 STATIC_ROOT = BASE_DIR / "local-cdn"

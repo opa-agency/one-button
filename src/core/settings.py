@@ -9,20 +9,22 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+
 from decouple import config
 from pathlib import Path
+from typing import Optional, cast
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Email config
-EMAIL_HOST=config("EMAIL_HOST", default="smtp.gmail.com")
-EMAIL_PORT=config("EMAIL_PORT", default=587, cast=int)
-EMAIL_USE_TLS=config("EMAIL_USE_TLS", default=True, cast=bool)
-EMAIL_USE_SSL=config("EMAIL_USE_SSL", default=False, cast=bool)
-EMAIL_HOST_USER=config("EMAIL_HOST_USER", default=None)
-EMAIL_HOST_PASSWORD=config("EMAIL_HOST_PASSWORD", default=None)
+EMAIL_HOST = config("EMAIL_HOST", default="smtp.gmail.com")
+EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
+EMAIL_USE_SSL = config("EMAIL_USE_SSL", default=False, cast=bool)
+EMAIL_HOST_USER = config("EMAIL_HOST_USER", default=None)
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default=None)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -32,9 +34,10 @@ SECRET_KEY = config("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
+ENABLE_BROWSER_RELOAD = config("ENABLE_BROWSER_RELOAD", default=False, cast=bool)
 BASE_URL = config("BASE_URL", default=None)
 ALLOWED_HOSTS = [
-    ".railway.app", 
+    ".railway.app",
 ]
 if DEBUG:
     ALLOWED_HOSTS += [
@@ -46,14 +49,14 @@ if DEBUG:
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
+    "django.contrib.admin",
+    "django.contrib.auth",
     # 'allauth.socialaccount',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'allauth',
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "allauth",
     # 'allauth.account',
     # 'allauth.socialaccount.providers.google',
     "tailwind",
@@ -64,69 +67,70 @@ INSTALLED_APPS = [
 TAILWIND_APP_NAME = "theme"
 # ALLAUTH_UI_THEME = "dark"
 
-if DEBUG:
-    # Add django_browser_reload only in DEBUG mode
+if DEBUG and ENABLE_BROWSER_RELOAD:
+    # Add django_browser_reload only when explicitly enabled
     INSTALLED_APPS += ["django_browser_reload"]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # "allauth.account.middleware.AccountMiddleware",
 ]
 
-if DEBUG:
+if DEBUG and ENABLE_BROWSER_RELOAD:
     MIDDLEWARE += [
         "django_browser_reload.middleware.BrowserReloadMiddleware",
     ]
 
 
-ROOT_URLCONF = 'core.urls'
+ROOT_URLCONF = "core.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'theme/templates'],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "theme/templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'core.wsgi.application'
+WSGI_APPLICATION = "core.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
 CONN_MAX_AGE = config("CONN_MAX_AGE", cast=int, default=600)
-DATABASE_URL = config("DATABASE_URL", default=None)
+DATABASE_URL: Optional[str] = cast(Optional[str], config("DATABASE_URL", default=None))
 
 if DATABASE_URL is not None and DEBUG is False:
     import dj_database_url
+
     DATABASES = {
-        'default': dj_database_url.parse(
-            DATABASE_URL, 
+        "default": dj_database_url.parse(
+            DATABASE_URL,
             conn_max_age=CONN_MAX_AGE,
             conn_health_checks=True,
-            )
+        )
     }
 
 
@@ -135,16 +139,16 @@ if DATABASE_URL is not None and DEBUG is False:
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -155,7 +159,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # ACCOUNT_EMAIL_VERIFICATION = 'mandatory' # Deprecated
 # ACCOUNT_LOGIN_METHODS = {'username', 'email'}
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
+    "django.contrib.auth.backends.ModelBackend",
 ]
 
 LOGIN_URL = "/accounts/login/"
@@ -173,9 +177,9 @@ LOGOUT_REDIRECT_URL = "/"
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -185,7 +189,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = "static/"
 STATICFILES_BASE_DIR = BASE_DIR / "staticfiles"
 
 STATICFILES_VENDOR_DIR = STATICFILES_BASE_DIR / "vendor"
@@ -202,14 +206,12 @@ STATIC_ROOT = BASE_DIR / "local-cdn"
 STORAGE = {
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    }   
+    }
 }
 
 # if not DEBUG:
-    # STATIC_ROOT = BASE_DIR.parent / "prod-cdn"
+# STATIC_ROOT = BASE_DIR.parent / "prod-cdn"
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

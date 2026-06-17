@@ -14,15 +14,28 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.views import LoginView
 from django.urls import include, path
-from application.views import home_page_view, checkout_finalize_view, dashboard_view, dashboard_admin_view, live_stats_view, partner_dashboard_view, register_view
+from application.views import (
+    home_page_view,
+    checkout_finalize_view,
+    dashboard_view,
+    dashboard_admin_view,
+    live_stats_view,
+    partner_dashboard_view,
+    register_view,
+)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path("accounts/login/", LoginView.as_view(redirect_authenticated_user=True), name="login"),
+    path("admin/", admin.site.urls),
+    path(
+        "accounts/login/",
+        LoginView.as_view(redirect_authenticated_user=True),
+        name="login",
+    ),
     path("accounts/register/", register_view, name="register"),
     path("accounts/", include("django.contrib.auth.urls")),
     path("", home_page_view, name="home"),
@@ -33,7 +46,7 @@ urlpatterns = [
     path("api/stats/", live_stats_view, name="live_stats"),
 ]
 
-if settings.DEBUG:
+if settings.DEBUG and getattr(settings, "ENABLE_BROWSER_RELOAD", False):
     # Include django_browser_reload URLs only in DEBUG mode
     urlpatterns += [
         path("__reload__/", include("django_browser_reload.urls")),

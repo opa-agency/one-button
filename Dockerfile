@@ -46,6 +46,7 @@ COPY requirements.txt /tmp/requirements.txt
 
 # copy the project code into the container's working directory
 COPY ./src/ /app/
+COPY start.sh /app/start.sh
 
 # Install the Python project requirements
 RUN pip install -r /tmp/requirements.txt
@@ -64,27 +65,7 @@ RUN python manage.py tailwind install
 RUN python manage.py tailwind build 
 RUN python manage.py collectstatic --noinput
 
-# set the Django default project name
-ARG PROJ_NAME="core"
-
-# create a bash script to run the Django project
-# this script will execute at runtime when
-# the container starts and the database is available
-RUN printf "#!/bin/bash\n" > ./paracord_runner.sh && \
-    printf "RUN_PORT=\"\${PORT:-8000}\"\n\n" >> ./paracord_runner.sh && \
-    printf "python manage.py migrate --no-input\n" >> ./paracord_runner.sh && \
-    printf "python manage.py ensure_superuser\n" >> ./paracord_runner.sh && \
-    printf "if [ \"\${SIMULATE_PAYMENTS_ON_START:-0}\" = \"1\" ]; then\n" >> ./paracord_runner.sh && \
-    printf "  CLEAR_FLAG=\"\"\n" >> ./paracord_runner.sh && \
-    printf "  if [ \"\${SIMULATE_PAYMENTS_CLEAR:-1}\" = \"1\" ]; then\n" >> ./paracord_runner.sh && \
-    printf "    CLEAR_FLAG=\"--clear\"\n" >> ./paracord_runner.sh && \
-    printf "  fi\n" >> ./paracord_runner.sh && \
-    printf "  python manage.py simulate_payments --interval \"\${SIMULATE_PAYMENTS_INTERVAL:-2}\" \$CLEAR_FLAG &\n" >> ./paracord_runner.sh && \
-    printf "fi\n" >> ./paracord_runner.sh && \
-    printf "gunicorn ${PROJ_NAME}.wsgi:application --bind \"[::]:\$RUN_PORT\"\n" >> ./paracord_runner.sh
-
-# make the bash script executable
-RUN chmod +x paracord_runner.sh
+RUN chmod +x /app/start.sh
 
 # Clean up apt cache to reduce image size
 RUN apt-get remove --purge -y \
@@ -92,6 +73,5 @@ RUN apt-get remove --purge -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Run the Django project via the runtime script
-# when the container starts
-CMD ./paracord_runner.sh
+# Run the Django project via the shared startup script
+CMD ["./start.sh"]

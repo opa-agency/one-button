@@ -201,7 +201,14 @@ STATICFILES_DIRS = [STATICFILES_BASE_DIR]
 STATIC_ROOT = BASE_DIR / "local-cdn"
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' # for older django versions
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # if not DEBUG:
 # STATIC_ROOT = BASE_DIR.parent / "prod-cdn"

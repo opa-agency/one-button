@@ -36,16 +36,16 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && rm -rf /var/lib/apt/lists/*
 
 # Create the mini vm's code directory
-RUN mkdir -p /code
+RUN mkdir -p /app
 
 # Set the working directory to that same code directory
-WORKDIR /code
+WORKDIR /app
 
 # Copy the requirements file into the container
 COPY requirements.txt /tmp/requirements.txt
 
 # copy the project code into the container's working directory
-COPY ./src /code
+COPY ./src/ /app/
 
 # Install the Python project requirements
 RUN pip install -r /tmp/requirements.txt

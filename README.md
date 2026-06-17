@@ -12,6 +12,9 @@ pip install -r requirements.dev.txt
 python manage.py tailwind install
 python manage.py tailwind start
 
+# optional admin bootstrap on container start
+# set DJANGO_SUPERUSER_USERNAME, DJANGO_SUPERUSER_EMAIL, DJANGO_SUPERUSER_PASSWORD
+
 
 
 

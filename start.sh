@@ -15,6 +15,7 @@ fi
 cd "$MANAGE_DIR"
 
 python manage.py migrate --no-input
+python manage.py ensure_superuser
 python manage.py tailwind build
 python manage.py collectstatic --no-input
 exec gunicorn core.wsgi:application --bind 0.0.0.0:${PORT:-8000}

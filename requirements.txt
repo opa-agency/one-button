@@ -7,5 +7,6 @@ requests>=2.32.3,<3
 chardet<6
 whitenoise
 django-tailwind
+django-browser-reload
 django-allauth[socialaccount]
 stripe

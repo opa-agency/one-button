@@ -18,6 +18,9 @@ from typing import Optional, cast
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+def _normalize_origin(origin: str) -> str:
+    return origin.replace("https//", "https://", 1).replace("http//", "http://", 1)
+
 # Email config
 EMAIL_HOST = config("EMAIL_HOST", default="smtp.gmail.com")
 EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
@@ -36,6 +39,8 @@ SECRET_KEY = config("DJANGO_SECRET_KEY")
 DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
 ENABLE_BROWSER_RELOAD = config("ENABLE_BROWSER_RELOAD", default=False, cast=bool)
 BASE_URL = config("BASE_URL", default=None)
+if BASE_URL:
+    BASE_URL = _normalize_origin(BASE_URL)
 ALLOWED_HOSTS = [
     ".railway.app",
 ]
@@ -48,9 +53,10 @@ if DEBUG:
 
 CSRF_TRUSTED_ORIGINS = config(
     "CSRF_TRUSTED_ORIGINS",
-    default="https://alexandru-croitoriu.dev,https://*.railway.app",
+    default="https://alexandru-croitoriu.dev",
     cast=Csv(),
 )
+CSRF_TRUSTED_ORIGINS = [_normalize_origin(origin) for origin in CSRF_TRUSTED_ORIGINS]
 if BASE_URL:
     CSRF_TRUSTED_ORIGINS = [BASE_URL, *CSRF_TRUSTED_ORIGINS]
 

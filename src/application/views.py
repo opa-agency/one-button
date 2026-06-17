@@ -306,10 +306,14 @@ def live_stats_view(request):
                 "since_seconds": int((now - created).total_seconds()),
             }
         )
-    return JsonResponse(
+    response = JsonResponse(
         {
             "count": count,
             "total_lei": count * 10,
             "latest": latest,
         }
     )
+    response["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response["Pragma"] = "no-cache"
+    response["Expires"] = "0"
+    return response

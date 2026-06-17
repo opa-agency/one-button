@@ -34,7 +34,7 @@ services:
       DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME:-}
       DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL:-}
       DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD:-}
-      SIMULATE_PAYMENTS_ON_START: ${SIMULATE_PAYMENTS_ON_START:-1}
+      SIMULATE_PAYMENTS_ON_START: ${SIMULATE_PAYMENTS_ON_START:-0}
       SIMULATE_PAYMENTS_INTERVAL: ${SIMULATE_PAYMENTS_INTERVAL:-2}
       SIMULATE_PAYMENTS_CLEAR: ${SIMULATE_PAYMENTS_CLEAR:-1}
       PORT: 8000
@@ -43,6 +43,41 @@ services:
         condition: service_healthy
     expose:
       - "8000"
+    networks:
+      - app-network
+
+  simulator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?DJANGO_SECRET_KEY is required}
+        DJANGO_DEBUG: ${DJANGO_DEBUG:-False}
+    restart: unless-stopped
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-False}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://${POSTGRES_USER:-onebutton}:${POSTGRES_PASSWORD:-onebutton}@db:5432/${POSTGRES_DB:-onebutton}}
+      CONN_MAX_AGE: ${CONN_MAX_AGE:-600}
+      SIMULATE_PAYMENTS_INTERVAL: ${SIMULATE_PAYMENTS_INTERVAL:-2}
+      SIMULATE_PAYMENTS_CLEAR: ${SIMULATE_PAYMENTS_CLEAR:-1}
+      SIMULATE_PAYMENTS_ENABLED: ${SIMULATE_PAYMENTS_ENABLED:-1}
+    depends_on:
+      db:
+        condition: service_healthy
+    command:
+      - /bin/bash
+      - -lc
+      - |
+        if [ "${SIMULATE_PAYMENTS_ENABLED:-1}" != "1" ]; then
+          echo "simulator disabled via SIMULATE_PAYMENTS_ENABLED=${SIMULATE_PAYMENTS_ENABLED:-0}";
+          tail -f /dev/null;
+        fi
+        python manage.py migrate --no-input
+        if [ "${SIMULATE_PAYMENTS_CLEAR:-1}" = "1" ]; then
+          exec python manage.py simulate_payments --interval "${SIMULATE_PAYMENTS_INTERVAL:-2}" --clear
+        fi
+        exec python manage.py simulate_payments --interval "${SIMULATE_PAYMENTS_INTERVAL:-2}"
     networks:
       - app-network
 

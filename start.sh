@@ -31,6 +31,10 @@ start_payment_simulator() {
     return 0
   fi
 
+  if [ "${DJANGO_DEBUG:-False}" = "True" ]; then
+    return 0
+  fi
+
   local clear_flag=""
   if [ "${SIMULATE_PAYMENTS_CLEAR:-1}" = "1" ]; then
     clear_flag="--clear"
@@ -47,7 +51,11 @@ start_payment_simulator() {
   ) &
 }
 
-retry_command "migrate" python manage.py migrate --no-input
+if [ "${DJANGO_DEBUG:-False}" = "True" ]; then
+  python manage.py migrate --no-input
+else
+  retry_command "migrate" python manage.py migrate --no-input
+fi
 python manage.py ensure_superuser
 if command -v npm >/dev/null 2>&1 || [ -n "${NPM_BIN_PATH:-}" ]; then
   python manage.py tailwind build

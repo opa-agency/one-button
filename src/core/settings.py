@@ -189,7 +189,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATICFILES_BASE_DIR = BASE_DIR / "staticfiles"
 
 STATICFILES_VENDOR_DIR = STATICFILES_BASE_DIR / "vendor"
@@ -203,11 +203,7 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / "local-cdn"
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' # for older django versions
 
-STORAGE = {
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    }
-}
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # if not DEBUG:
 # STATIC_ROOT = BASE_DIR.parent / "prod-cdn"

@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
-from decouple import config
+from decouple import Csv, config
 from pathlib import Path
 from typing import Optional, cast
 
@@ -45,6 +45,14 @@ if DEBUG:
         "localhost",
         "alexandru-croitoriu.dev",
     ]
+
+CSRF_TRUSTED_ORIGINS = config(
+    "CSRF_TRUSTED_ORIGINS",
+    default="https://alexandru-croitoriu.dev,https://*.railway.app",
+    cast=Csv(),
+)
+if BASE_URL:
+    CSRF_TRUSTED_ORIGINS = [BASE_URL, *CSRF_TRUSTED_ORIGINS]
 
 # Application definition
 

@@ -27,6 +27,18 @@ stripe.api_key = STRIPE_SECRET_KEY
 DEFAULT_SHARE_TITLE = "Am văzut statistica. Tu n-ai văzut-o."
 DEFAULT_SHARE_DESCRIPTION = "Statistică în timp real. Plătesc 10 lei."
 DEFAULT_SHARE_TEXT = "Am văzut statistica. Tu n-ai văzut-o."
+OG_IMAGE_VERSION = config("OG_IMAGE_VERSION", default="20260618")
+
+
+def _canonical_absolute_url(request, path_or_url):
+    configured_base_url = getattr(settings, "BASE_URL", None)
+    if configured_base_url:
+        parsed = urlparse(path_or_url)
+        path = parsed.path or "/"
+        query = f"?{parsed.query}" if parsed.query else ""
+        fragment = f"#{parsed.fragment}" if parsed.fragment else ""
+        return f"{configured_base_url.rstrip('/')}{path}{query}{fragment}"
+    return request.build_absolute_uri(path_or_url)
 
 
 def _share_context(
@@ -37,12 +49,13 @@ def _share_context(
     title="",
     description="",
 ):
-    share_url = url or request.build_absolute_uri(reverse("home"))
+    share_url = _canonical_absolute_url(request, url or reverse("home"))
     share_text = text or DEFAULT_SHARE_TEXT
     share_title = title or DEFAULT_SHARE_TITLE
     share_description = description or DEFAULT_SHARE_DESCRIPTION
-    share_image_url = request.build_absolute_uri(static("theme/images/share-card.jpeg"))
-    share_story_image_url = request.build_absolute_uri(static("theme/images/share-story.png"))
+    share_image_url = _canonical_absolute_url(request, static("theme/images/share-card.jpeg"))
+    share_story_image_url = _canonical_absolute_url(request, static("theme/images/share-story.png"))
+    share_image_url = f"{share_image_url}?v={OG_IMAGE_VERSION}"
     return {
         "share_url": share_url,
         "share_text": share_text,

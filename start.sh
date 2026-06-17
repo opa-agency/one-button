@@ -26,31 +26,6 @@ retry_command() {
   done
 }
 
-start_payment_simulator() {
-  if [ "${SIMULATE_PAYMENTS_ON_START:-0}" != "1" ]; then
-    return 0
-  fi
-
-  if [ "${DJANGO_DEBUG:-False}" = "True" ]; then
-    return 0
-  fi
-
-  local clear_flag=""
-  if [ "${SIMULATE_PAYMENTS_CLEAR:-1}" = "1" ]; then
-    clear_flag="--clear"
-  fi
-
-  (
-    while true; do
-      if python manage.py simulate_payments --interval "${SIMULATE_PAYMENTS_INTERVAL:-2}" ${clear_flag}; then
-        break
-      fi
-      echo "simulate_payments stopped unexpectedly; restarting in 5s" >&2
-      sleep 5
-    done
-  ) &
-}
-
 if [ "${DJANGO_DEBUG:-False}" = "True" ]; then
   python manage.py migrate --no-input
 else
@@ -63,5 +38,4 @@ else
   echo "npm not available; skipping Tailwind rebuild and continuing with existing static assets" >&2
 fi
 python manage.py collectstatic --no-input
-start_payment_simulator
 exec gunicorn core.wsgi:application --bind 0.0.0.0:${PORT:-8000}

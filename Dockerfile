@@ -74,6 +74,13 @@ RUN printf "#!/bin/bash\n" > ./paracord_runner.sh && \
     printf "RUN_PORT=\"\${PORT:-8000}\"\n\n" >> ./paracord_runner.sh && \
     printf "python manage.py migrate --no-input\n" >> ./paracord_runner.sh && \
     printf "python manage.py ensure_superuser\n" >> ./paracord_runner.sh && \
+    printf "if [ \"\${SIMULATE_PAYMENTS_ON_START:-0}\" = \"1\" ]; then\n" >> ./paracord_runner.sh && \
+    printf "  CLEAR_FLAG=\"\"\n" >> ./paracord_runner.sh && \
+    printf "  if [ \"\${SIMULATE_PAYMENTS_CLEAR:-1}\" = \"1\" ]; then\n" >> ./paracord_runner.sh && \
+    printf "    CLEAR_FLAG=\"--clear\"\n" >> ./paracord_runner.sh && \
+    printf "  fi\n" >> ./paracord_runner.sh && \
+    printf "  python manage.py simulate_payments --interval \"\${SIMULATE_PAYMENTS_INTERVAL:-2}\" \$CLEAR_FLAG &\n" >> ./paracord_runner.sh && \
+    printf "fi\n" >> ./paracord_runner.sh && \
     printf "gunicorn ${PROJ_NAME}.wsgi:application --bind \"[::]:\$RUN_PORT\"\n" >> ./paracord_runner.sh
 
 # make the bash script executable

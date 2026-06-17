@@ -27,7 +27,7 @@ stripe.api_key = STRIPE_SECRET_KEY
 DEFAULT_SHARE_TITLE = "Am văzut statistica. Tu n-ai văzut-o."
 DEFAULT_SHARE_DESCRIPTION = "Statistică în timp real. Plătesc 10 lei."
 DEFAULT_SHARE_TEXT = "Am văzut statistica. Tu n-ai văzut-o."
-OG_IMAGE_VERSION = config("OG_IMAGE_VERSION", default="20260618e")
+OG_IMAGE_VERSION = config("OG_IMAGE_VERSION", default="20260618f")
 
 
 def _canonical_absolute_url(request, path_or_url):

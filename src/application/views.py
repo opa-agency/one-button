@@ -41,7 +41,7 @@ def _share_context(
     share_text = text or DEFAULT_SHARE_TEXT
     share_title = title or DEFAULT_SHARE_TITLE
     share_description = description or DEFAULT_SHARE_DESCRIPTION
-    share_image_url = request.build_absolute_uri(static("theme/images/share-card.png"))
+    share_image_url = request.build_absolute_uri(static("theme/images/share-card.jpeg"))
     share_story_image_url = request.build_absolute_uri(static("theme/images/share-story.png"))
     return {
         "share_url": share_url,

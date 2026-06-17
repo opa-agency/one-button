@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from decouple import Csv, config
 from pathlib import Path
+from urllib.parse import urlparse
 from typing import Optional, cast
 
 
@@ -19,7 +20,15 @@ from typing import Optional, cast
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 def _normalize_origin(origin: str) -> str:
-    return origin.replace("https//", "https://", 1).replace("http//", "http://", 1)
+    normalized = origin.strip().replace("https//", "https://", 1).replace("http//", "http://", 1)
+    if not normalized:
+        return normalized
+    if normalized.startswith("//"):
+        return f"https:{normalized}"
+    parsed = urlparse(normalized)
+    if parsed.scheme:
+        return normalized
+    return f"https://{normalized}"
 
 # Email config
 EMAIL_HOST = config("EMAIL_HOST", default="smtp.gmail.com")

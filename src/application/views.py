@@ -1,7 +1,9 @@
 from uuid import uuid4
 from urllib.parse import urlencode
 from datetime import timedelta
+from urllib.parse import urlparse
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -20,7 +22,6 @@ from .messages import random_payment_message
 
 STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY")
 STRIPE_PRICE_ID = config("STRIPE_PRICE_ID")
-BASE_URL = config("BASE_URL")
 stripe.api_key = STRIPE_SECRET_KEY
 
 DEFAULT_SHARE_TITLE = "Plătesc 10 Lei — Statistica live"
@@ -60,6 +61,17 @@ def _referral_user_from_value(value):
     except (TypeError, ValueError):
         return None
     return get_user_model().objects.filter(id=user_id).first()
+
+
+def _build_success_url(request, token):
+    configured_base_url = getattr(settings, "BASE_URL", None)
+    if configured_base_url:
+        parsed = urlparse(configured_base_url)
+        if parsed.scheme and parsed.netloc:
+            return f"{configured_base_url.rstrip('/')}{reverse('checkout_finalize')}?{urlencode({'token': token})}"
+    return request.build_absolute_uri(
+        f"{reverse('checkout_finalize')}?{urlencode({'token': token})}"
+    )
 
 
 def register_view(request):
@@ -160,7 +172,7 @@ def home_page_view(request):
         if not token:
             return HttpResponseNotAllowed("No token in query parameter")
         referral_user = _referral_user_from_value(referral_value)
-        success_url = f"{BASE_URL}/checkout/finalize/?{urlencode({'token': token})}"
+        success_url = _build_success_url(request, token)
         metadata = {"token": token}
         if referral_user:
             metadata["referral_user_id"] = str(referral_user.id)

@@ -1,5 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+MANAGE_DIR=""
+
+if [ -f "manage.py" ]; then
+  MANAGE_DIR="."
+elif [ -f "src/manage.py" ]; then
+  MANAGE_DIR="src"
+else
+  echo "manage.py not found" >&2
+  exit 1
+fi
+
+cd "$MANAGE_DIR"
+
 python manage.py migrate --no-input
-gunicorn core.wsgi:application --bind 0.0.0.0:${PORT:-8000}
+exec gunicorn core.wsgi:application --bind 0.0.0.0:${PORT:-8000}

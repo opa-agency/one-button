@@ -27,7 +27,7 @@ stripe.api_key = STRIPE_SECRET_KEY
 DEFAULT_SHARE_TITLE = "Am văzut statistica. Tu n-ai văzut-o."
 DEFAULT_SHARE_DESCRIPTION = "Statistică în timp real. Plătesc 10 lei."
 DEFAULT_SHARE_TEXT = "Am văzut statistica. Tu n-ai văzut-o."
-OG_IMAGE_VERSION = config("OG_IMAGE_VERSION", default="20260618d")
+OG_IMAGE_VERSION = config("OG_IMAGE_VERSION", default="20260618e")
 
 
 def _canonical_absolute_url(request, path_or_url):
@@ -53,7 +53,7 @@ def _share_context(
     share_text = text or DEFAULT_SHARE_TEXT
     share_title = title or DEFAULT_SHARE_TITLE
     share_description = description or DEFAULT_SHARE_DESCRIPTION
-    share_image_url = _canonical_absolute_url(request, static("theme/images/share-card.jpeg"))
+    share_image_url = _canonical_absolute_url(request, static("theme/images/share-card.png"))
     share_story_image_url = _canonical_absolute_url(request, static("theme/images/share-story.png"))
     share_image_url = f"{share_image_url}?v={OG_IMAGE_VERSION}"
     return {

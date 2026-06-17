@@ -1,28 +1,73 @@
-{% with block_id=share_block_id|default:"share-block" %}
+{% with block_id=share_block_id|default:"share-block" mode=share_mode|default:"default" %}
   <section class="panel share-block" id="{{ block_id }}">
     <h2 class="share-title">{{ share_title|default:"Distribuie rapid" }}</h2>
     {% if share_description %}
       <p class="share-copy">{{ share_description }}</p>
     {% endif %}
 
-    <div class="share-actions">
-      <button
-        type="button"
-        class="share-action primary"
-        data-share-button
-        data-share-title="{{ share_data_title|default:share_title|default:'Distribuie' }}"
+    {% if mode == "distribution" %}
+      <div
+        class="share-actions share-actions-distribution"
+        data-share-distribution
+        data-share-title="{{ share_data_title|default:share_title|default:'Arată-le.' }}"
         data-share-text="{{ share_text|default:"" }}"
         data-share-url="{{ share_url|default:"" }}"
-        data-share-image="{{ share_image_url|default:"" }}"
-        data-share-loading="{{ share_loading_label|default:'Se pregătește...' }}"
-        data-share-success="{{ share_success_label|default:'Trimis' }}"
-        data-share-fallback="{{ share_copied_label|default:'Link copiat' }}"
-        data-share-error="{{ share_error_label|default:'Nu am putut partaja' }}"
-        data-share-message-duration="{{ share_message_duration|default:2000 }}"
+        data-share-image="{{ share_story_image_url|default:share_image_url|default:"" }}"
       >
-        {{ share_native_label|default:"Share" }}
-      </button>
-    </div>
+        <button type="button" class="share-action" data-share-chat-toggle>
+          {{ share_chat_label|default:"Provoacă un prieten" }}
+        </button>
+        <button
+          type="button"
+          class="share-action primary"
+          data-share-story
+          data-share-loading="Se pregătește..."
+          data-share-success="Trimis"
+          data-share-fallback="Mesaj copiat"
+          data-share-error="Story indisponibil"
+          data-share-message-duration="2200"
+        >
+          {{ share_story_label|default:"Arată-le tuturor" }}
+        </button>
+
+        <div class="share-chat-row" data-share-chat-row hidden>
+          <a class="share-action" data-share-chat-wa href="#" target="_blank" rel="noopener">WhatsApp</a>
+          <a class="share-action" data-share-chat-tg href="#" target="_blank" rel="noopener">Telegram</a>
+          <a class="share-action" data-share-chat-fb href="#" target="_blank" rel="noopener">Facebook</a>
+          <button
+            type="button"
+            class="share-action"
+            data-share-chat-native
+            data-share-loading="Se pregătește..."
+            data-share-success="Trimis"
+            data-share-fallback="Mesaj copiat"
+            data-share-error="Nu am putut partaja"
+            data-share-message-duration="2200"
+          >
+            Altele
+          </button>
+        </div>
+      </div>
+    {% else %}
+      <div class="share-actions">
+        <button
+          type="button"
+          class="share-action primary"
+          data-share-button
+          data-share-title="{{ share_data_title|default:share_title|default:'Distribuie' }}"
+          data-share-text="{{ share_text|default:"" }}"
+          data-share-url="{{ share_url|default:"" }}"
+          data-share-image="{{ share_image_url|default:"" }}"
+          data-share-loading="{{ share_loading_label|default:'Se pregătește...' }}"
+          data-share-success="{{ share_success_label|default:'Trimis' }}"
+          data-share-fallback="{{ share_copied_label|default:'Link copiat' }}"
+          data-share-error="{{ share_error_label|default:'Nu am putut partaja' }}"
+          data-share-message-duration="{{ share_message_duration|default:2000 }}"
+        >
+          {{ share_native_label|default:"Share" }}
+        </button>
+      </div>
+    {% endif %}
 
     {% if share_hint %}
       <p class="share-hint">{{ share_hint }}</p>
@@ -59,6 +104,16 @@
       flex-direction: column;
       gap: 10px;
       margin-top: 20px;
+    }
+
+    .share-block .share-chat-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .share-block .share-chat-row[hidden] {
+      display: none;
     }
 
     .share-block .share-action {
@@ -115,6 +170,10 @@
 
       .share-block .share-action {
         width: 100%;
+      }
+
+      .share-block .share-chat-row {
+        grid-template-columns: 1fr;
       }
     }
   </style>

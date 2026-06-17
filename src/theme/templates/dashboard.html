@@ -337,7 +337,7 @@
       Acum întrebarea e: cedează și prietenii tăi?
     </p>
 
-    {% with share_block_id="dashboard-share" share_url=share_url share_text=share_text share_image_url=share_image_url share_title="Distribuie rapid" share_description="WhatsApp și Facebook se deschid direct. Instagram și TikTok copiază mesajul ca să-l lipești, iar butonul Share folosește share sheet-ul telefonului sau copiază linkul." share_copied_label="Copiat" share_native_label="Share" %}
+    {% with share_block_id="dashboard-share" share_mode="distribution" share_url=share_url share_text=share_text share_image_url=share_image_url share_story_image_url=share_story_image_url share_title="Arată-le." share_story_label="Arată-le tuturor" share_chat_label="Provoacă un prieten" %}
       {% include "snippets/share_block.html" %}
     {% endwith %}
   </div>

@@ -50,9 +50,7 @@ ENABLE_BROWSER_RELOAD = config("ENABLE_BROWSER_RELOAD", default=False, cast=bool
 BASE_URL = config("BASE_URL", default=None)
 if BASE_URL:
     BASE_URL = _normalize_origin(BASE_URL)
-ALLOWED_HOSTS = [
-    ".railway.app",
-]
+ALLOWED_HOSTS = []
 if DEBUG:
     ALLOWED_HOSTS += [
         "127.0.0.1",

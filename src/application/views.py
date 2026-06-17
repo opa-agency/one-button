@@ -24,9 +24,9 @@ STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY")
 STRIPE_PRICE_ID = config("STRIPE_PRICE_ID")
 stripe.api_key = STRIPE_SECRET_KEY
 
-DEFAULT_SHARE_TITLE = "Plătesc 10 Lei — Statistica live"
-DEFAULT_SHARE_DESCRIPTION = "Plătește 10 lei și vezi în timp real câți au cedat deja. Distribuie și prietenilor."
-DEFAULT_SHARE_TEXT = "Eu am văzut statistica. Tu n-ai văzut-o."
+DEFAULT_SHARE_TITLE = "Am văzut statistica. Tu n-ai văzut-o."
+DEFAULT_SHARE_DESCRIPTION = "Statistică în timp real. Plătesc 10 lei."
+DEFAULT_SHARE_TEXT = "Am văzut statistica. Tu n-ai văzut-o."
 
 
 def _share_context(
@@ -42,6 +42,7 @@ def _share_context(
     share_title = title or DEFAULT_SHARE_TITLE
     share_description = description or DEFAULT_SHARE_DESCRIPTION
     share_image_url = request.build_absolute_uri(static("theme/images/share-card.png"))
+    share_story_image_url = request.build_absolute_uri(static("theme/images/share-story.png"))
     return {
         "share_url": share_url,
         "share_text": share_text,
@@ -50,6 +51,7 @@ def _share_context(
         "share_meta_description": share_description,
         "share_meta_url": share_url,
         "share_image_url": share_image_url,
+        "share_story_image_url": share_story_image_url,
     }
 
 
